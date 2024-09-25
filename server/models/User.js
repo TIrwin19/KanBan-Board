@@ -10,17 +10,20 @@ function validateEmail(value) {
 const userSchema = new Schema({
     username: {
         type: String,
-        unique: true
+        unique: true,
+        required: true,
     },
 
     email: {
         type: String,
         unique: true,
+        required: true,
         validate: [validateEmail, 'You must enter a valid email address']
     },
 
     password: {
         type: String,
+        required: true,
         minLength: [6, 'Your password must be at least 6 characters in length']
     }
 })
