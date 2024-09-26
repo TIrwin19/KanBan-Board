@@ -5,12 +5,12 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const { ApolloServer } = require('@apollo/server')
 const { expressMiddleware } = require('@apollo/server/express4') //this helps us to use apollo server with express 
-const mongoose = require('mongoose')
-const { typeDefs, resolvers } = require('./graphql/schema')
+const mongoose = require('./config/client')
+const resolvers = require('./graphql/resolvers')
+const typeDefs = require('./graphql/typedefs')
 
-import path from "path";
-//REMEMBER TO MAKE client.js underr config folder (mongoose.connect shit)
-const client = require('./config/client')
+
+
 
 
 
@@ -74,6 +74,6 @@ mongoose.on('error', (err) => {
 //.env must do list: CLIENT_URL , PORT , DB_NAME  example:
 /*
 PORT=4000
-DB_NAME=your-db-name
+DB_NAME=kanBanDB
 CLIENT_URL=http://localhost:3000
 */
