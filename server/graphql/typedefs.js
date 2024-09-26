@@ -2,7 +2,7 @@
 
 const gql = String.raw
 
-const typedefs = gql`
+const typeDefs = gql`
 type User {
   id: ID!
   username: String!
@@ -43,6 +43,7 @@ type Query {
 type Mutation {
   createColumn(projectId: ID!, title: String!, order: Int!): Column!
   deleteColumn(projectId: ID!, columnId: ID!): Boolean!
+  updateColumnOrder(projectId: ID!, columnId: ID!, newOrder: Int!): Project!
 
   createTask(projectId: ID!, columnId: ID!, title: String!, description: String!, order: Int!, user: ID): Task!
   deleteTask(projectId: ID!, columnId: ID!, taskId: ID!): Boolean!
@@ -60,4 +61,4 @@ type Mutation {
 }
 `
 
-module.exports = typedefs
+module.exports = typeDefs

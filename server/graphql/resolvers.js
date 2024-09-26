@@ -1,6 +1,7 @@
 // NEEDS REVIEW, NOT DONE
 
-const { User, Project } = require("../models")
+const User = require("../models/User")
+const Project = require("../models/Project")
 
 // Need a function for creating a user token
 // function createToken(user) {
@@ -40,12 +41,38 @@ const resolvers = {
       await project.save();
       return column;
     },
+
     deleteColumn: async (_, { projectId, columnId }) => {
       const project = await Project.findById(projectId);
       project.columns.id(columnId).remove();
       await project.save();
       return true;
     },
+
+    updateColumnOrder: async (_, { projectId, columnId, newOrder }) => {
+      const project = await Project.findById(projectId);
+
+      // Find the column to be moved
+      const column = project.columns.id(columnId);
+      if (!column) {
+        throw new Error('Column not found');
+      }
+
+      // Remove the column from its current position
+      project.columns = project.columns.filter(col => col.id !== columnId);
+
+      // Insert the column at the new order
+      project.columns.splice(newOrder, 0, column);
+
+      // Update the order property of columns based on the new order
+      project.columns.forEach((col, index) => {
+        col.order = index; // Update order based on index
+      });
+
+      await project.save();
+      return project;
+    },
+
     createTask: async (_, { projectId, columnId, title, description, order, user }) => {
       const project = await Project.findById(projectId);
       const column = project.columns.id(columnId);
@@ -54,6 +81,7 @@ const resolvers = {
       await project.save();
       return task;
     },
+
     deleteTask: async (_, { projectId, columnId, taskId }) => {
       const project = await Project.findById(projectId);
       const column = project.columns.id(columnId);
@@ -61,6 +89,7 @@ const resolvers = {
       await project.save();
       return true;
     },
+
     moveTask: async (_, { projectId, taskId, newColumnId, order }) => {
       const project = await Project.findById(projectId);
       let task;
