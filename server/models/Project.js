@@ -1,31 +1,17 @@
-//NEEDS REVIEW, NOT DONE
+//NEEDS REVIEW
 
 const { model, Schema } = require('mongoose')
-
-const columnSchema = new Schema({
-  title: {
-    type: String,
-    require: true,
-  },
-
-  order: {
-    type: Number,
-    require: true,
-  },
-
-  tasks: [taskSchema],
-})
 
 const taskSchema = new Schema({
   title: {
     type: String,
-    require: true,
+    required: true,
     default: ""
   },
 
   description: {
     type: String,
-    reqiuire: true,
+    required: true,
     default: ""
   },
 
@@ -51,26 +37,38 @@ const taskSchema = new Schema({
     ref: 'User'
   },
 
-  column: columnSchema,
 }, {
   timestamp: true
+})
+
+const columnSchema = new Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+
+  order: {
+    type: Number,
+    required: true,
+  },
+
+  tasks: [taskSchema], // Nested tasks within a column
 })
 
 const projectSchema = new Schema({
   title: {
     type: String,
-    require: true,
+    required: true,
   },
 
   // admin?
 
-  members: {
+  members: [{
     type: Schema.Types.ObjectId,
-    ref: ['User'] //other users without admin privalges
-  },
+    ref: 'User' //other users without admin privalges
+  }],
 
-  columns: [columnSchema],
-  tasks: [taskSchema],
+  columns: [columnSchema], //Nested columns within a project
 })
 
 const Project = model('Project', projectSchema)
