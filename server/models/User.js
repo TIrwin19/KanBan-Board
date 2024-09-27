@@ -1,5 +1,5 @@
 const { model, Schema } = require('mongoose')
-const { hash, compare } = require('bcrypt')
+const { hash, compare } = require('bcryptjs') //using bcryptjs for efficency
 
 function validateEmail(value) {
     const exp = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g)
