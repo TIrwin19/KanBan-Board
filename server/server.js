@@ -8,7 +8,7 @@ const { expressMiddleware } = require('@apollo/server/express4') //this helps us
 const mongoose = require('./config/client')
 const resolvers = require('./graphql/resolvers')
 const typeDefs = require('./graphql/typedefs')
-
+const auth_router = require('./routes/auth_routes_test')
 
 
 
@@ -31,6 +31,8 @@ app.use(cookieParser())// This allows the server to read and parse cookies sent 
 //body parser for JSON
 app.use(express.json()) // Built-in middleware to parse incoming JSON request bodies, which is commonly used in modern APIs (e.g., GraphQL or REST APIs).
 
+// Use the authentication routes at the /auth endpoint
+app.use('/auth', auth_router); // This integrates the authentication routes for registration, login, logout, etc.
 
 // initialize apollo server
 const apolloServer = new ApolloServer({

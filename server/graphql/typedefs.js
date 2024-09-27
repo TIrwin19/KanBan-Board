@@ -9,6 +9,11 @@ type User {
   email: String
 }
 
+type AuthPayload {
+    accessToken: String!
+    user: User!
+  }
+
 type Task {
  id: ID!
  title: String!
@@ -35,7 +40,6 @@ type Project {
 }
 
 type Query {
-  authenticate: User!
   getUser: User!
   getProject(id: ID!): Project!
 }
@@ -49,6 +53,11 @@ type Mutation {
   deleteTask(projectId: ID!, columnId: ID!, taskId: ID!): Boolean!
   moveTask(projectId: ID!, taskId: ID!, newColumnId: ID!, order: Int!): Project!
 
+  register(username: String!, email: String!, password: String!): AuthPayload!
+  login(username: String!, password: String!): AuthPayload!
+  refreshAccessToken: AuthPayload!
+  logout: Boolean!
+    
   # createColumn(title: String!, order: Int!): Column!
   # updateColumn(id: ID!, title: String): Column!
   # deleteColumn(id: ID!): Boolean!

@@ -1,30 +1,34 @@
 // NEEDS REVIEW, NOT DONE
-
+const bcrypt = require('bcryptjs');
+const { sign, verify } = require('jsonwebtoken');
 const User = require("../models/User")
 const Project = require("../models/Project")
 
-// Need a function for creating a user token
-// function createToken(user) {
-
-// }
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+const REFRESH_SECRET = process.env.REFRESH_SECRET || 'your_refresh_secret';
+const JWT_EXPIRES_IN = '15m'; // Access Token expires in 15 minutes
+const REFRESH_TOKEN_EXPIRES_IN = '7d'; // Refresh Token expires in 7 days
 
 const resolvers = {
   Query: {
     // Auth resolver
-    async authenticate(_, args, context) {
-      const id = context.req?.user.id;
-      if (!id) return null;
+    getUser: async (parent, args, context) => {
+      const { req } = context;
+      const token = req.cookies?.accessToken;
 
-      // Use the User model to grab the user by req.user_id
-      const user = await User.findById(id);
-      return user;
+      if (!token) {
+        throw new Error('Not authenticated');
+      }
+
+      try {
+        const decoded = verify(token, JWT_SECRET);
+        const user = await User.findById(decoded.id);
+        if (!user) throw new Error('User not found');
+        return { id: user._id, username: user.username, email: user.email };
+      } catch (error) {
+        throw new Error('Invalid or expired token');
+      }
     },
-
-    // columns: async () => await Column.find().populate('tasks'),
-
-    // column: async (_, { id }) => await Column.findById(id).populate('tasks'),
-
-    // tasks: async (_, { columnId }) => await Task.find({ column: columnId }),
 
     // Get Project
     getProject: async (_, { id }) => {
@@ -109,6 +113,78 @@ const resolvers = {
 
       await project.save();
       return project;
+    },
+
+    register: async (parent, { username, email, password }) => {
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        throw new Error('Username already taken');
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 12);
+      const newUser = new User({ username, email, password: hashedPassword });
+
+      await newUser.save();
+
+      const accessToken = sign({ id: newUser._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+      const refreshToken = sign({ id: newUser._id }, REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN });
+
+      context.res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
+
+      return {
+        accessToken,
+        user: {
+          id: newUser._id,
+          username: newUser.username,
+          email: newUser.email,
+        },
+      };
+    },
+
+    login: async (parent, { username, password }, context) => {
+      const user = await User.findOne({ username });
+      if (!user) {
+        throw new Error('Invalid credentials');
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        throw new Error('Invalid credentials');
+      }
+
+      const accessToken = sign({ id: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+      const refreshToken = sign({ id: user._id }, REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN });
+
+      context.res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
+
+      return {
+        accessToken,
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+        },
+      };
+    },
+
+    refreshAccessToken: (parent, args, context) => {
+      const { refreshToken } = context.req.cookies;
+
+      if (!refreshToken) {
+        throw new Error('Not authenticated');
+      }
+      try {
+        const decoded = verify(refreshToken, REFRESH_SECRET);
+        const accessToken = sign({ id: decoded.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+        return { accessToken, user: { id: decoded.id } };
+      } catch (error) {
+        throw new Error('Invalid or expired refresh token');
+      }
+    },
+
+    logout: (parent, args, context) => {
+      context.res.clearCookie('refreshToken');
+      return true;
     },
   },
 }
