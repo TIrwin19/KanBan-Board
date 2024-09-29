@@ -42,13 +42,13 @@ userSchema.methods.validatePass = async function (formPassword) {
     return valid
 }
 
-userSchema.pre('save', async function (next) {
-    if (this.isNew) {
-        this.password = await hash(this.password, 10)
-    }
+// userSchema.pre('save', async function (next) {
+//     if (this.isNew) {
+//         this.password = await hash(this.password, 10)
+//     }
 
-    next()
-})
+//     next()
+// })
 
 const User = model('User', userSchema)
 

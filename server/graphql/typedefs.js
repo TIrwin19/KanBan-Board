@@ -45,6 +45,9 @@ type Query {
 }
 
 type Mutation {
+  createProject(title: String!, members: [ID!]!): Project!
+  deleteProject(projectId: ID!): Boolean!
+
   createColumn(projectId: ID!, title: String!, order: Int!): Column!
   deleteColumn(projectId: ID!, columnId: ID!): Boolean!
   updateColumnOrder(projectId: ID!, columnId: ID!, newOrder: Int!): Project!
