@@ -116,6 +116,9 @@ const resolvers = {
     },
 
     register: async (parent, { username, email, password }) => {
+
+      // console.log('Reg Password entered:', password);
+
       const existingUser = await User.findOne({ username });
       if (existingUser) {
         throw new Error('Username already taken');
@@ -142,20 +145,34 @@ const resolvers = {
     },
 
     login: async (parent, { username, password }, context) => {
+      // console.log('Login Password entered:', password);
+
+
       const user = await User.findOne({ username });
+      console.log('Login Hashed password from DB:', user.password);
       if (!user) {
+        console.log('No user found for username:', username); // Debugging log
         throw new Error('Invalid credentials');
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
+
+
       if (!isMatch) {
+        console.log('Password mismatch for user:', username);  // Add debug log
         throw new Error('Invalid credentials');
       }
 
       const accessToken = sign({ id: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-      const refreshToken = sign({ id: user._id }, REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN });
 
-      context.res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
+      const refreshToken = sign({ id: user._id }, REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN });
+      console.log('refresh token', refreshToken)
+      context.res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        // secure: true,
+        secure: process.env.NODE_ENV === 'production',  // Use secure cookies in production 
+        sameSite: 'Strict'
+      });
 
       return {
         accessToken,

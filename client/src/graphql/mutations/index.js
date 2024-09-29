@@ -1,0 +1,19 @@
+import { LOGIN, REGISTER, LOGOUT, REFRESH_ACCESS_TOKEN } from "./authMutations"
+import { CREATE_COLUMN, DELETE_COLUMN, UPDATE_COLUMN_ORDER } from "./columnMutations"
+import { CREATE_PROJECT, DELETE_PROJECT } from "./projectMutations"
+import { CREATE_TASK, DELETE_TASK, MOVE_TASK } from "./taskMutations"
+
+export default {
+  LOGIN,
+  REGISTER,
+  LOGOUT,
+  REFRESH_ACCESS_TOKEN,
+  CREATE_COLUMN,
+  DELETE_COLUMN,
+  UPDATE_COLUMN_ORDER,
+  CREATE_PROJECT,
+  DELETE_PROJECT,
+  CREATE_TASK,
+  DELETE_TASK,
+  MOVE_TASK
+}

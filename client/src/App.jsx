@@ -1,7 +1,7 @@
 import React from "react";
 import ProjectPage from "./graphql/ProjectPage";
 // import KanbanBoard from "./pages/test";
-
+import Landing from "./pages/Landing";
 function App() {
   return (
     <div>
@@ -9,6 +9,7 @@ function App() {
       <ProjectPage projectId="1" />
       {/* <KanbanBoard /> */}
       {/* Example project page */}
+      <Landing />
     </div>
   );
 }
