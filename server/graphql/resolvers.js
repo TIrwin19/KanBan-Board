@@ -132,7 +132,12 @@ const resolvers = {
       const accessToken = sign({ id: newUser._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
       const refreshToken = sign({ id: newUser._id }, REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN });
 
-      context.res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
+      context.res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        // secure: true,
+        secure: process.env.NODE_ENV === 'production',  // Use secure cookies in production 
+        sameSite: 'Strict'
+      });
 
       return {
         accessToken,
@@ -146,10 +151,8 @@ const resolvers = {
 
     login: async (parent, { username, password }, context) => {
       // console.log('Login Password entered:', password);
-
-
       const user = await User.findOne({ username });
-      console.log('Login Hashed password from DB:', user.password);
+      // console.log('Login Hashed password from DB:', user.password);
       if (!user) {
         console.log('No user found for username:', username); // Debugging log
         throw new Error('Invalid credentials');
@@ -164,9 +167,9 @@ const resolvers = {
       }
 
       const accessToken = sign({ id: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-
       const refreshToken = sign({ id: user._id }, REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN });
-      console.log('refresh token', refreshToken)
+
+      // console.log('refresh token', refreshToken)
       context.res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         // secure: true,
@@ -177,7 +180,7 @@ const resolvers = {
       return {
         accessToken,
         user: {
-          id: user._id,
+          // id: user._id,
           username: user.username,
           email: user.email,
         },

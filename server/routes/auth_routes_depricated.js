@@ -26,19 +26,41 @@ user_router.get('/', async (req, res) => {
 
 
 //register user
+// user_router.post('/register', async (req, res) => {
+//   try {
+//     const newUser = await User.create(req.body)
+//     const token = createToken(newUser)
+//     res.cookie('token', token, { httpOnly: true })//httpOnly prevents access to the cookie from the client side
+//     await newUser.save()
+//     res.status(201).send(newUser)
+
+
+//   } catch (err) {
+//     if (err.name === 'ValidationError') {
+//       const validationErr = err.errors
+
+//       const errorMessage = Object.keys(validationErr)
+//         .map((key) => `${key} is required`)
+//         .join(", ")
+//       res.status(400).send({ message: errorMessage })
+//     } else {
+//       res.status(500).send(error)
+//     }
+//   }
+// })
+
+//register user
 user_router.post('/register', async (req, res) => {
   try {
     const newUser = await User.create(req.body)
     const token = createToken(newUser)
-    res.cookie('token', token, { httpOnly: true })//httpOnly prevents access to the cookie from the client side
     await newUser.save()
-    res.status(201).send(newUser)
 
-
+    // Send token in the response instead of setting the cookie
+    res.status(201).send({ user: newUser, token })
   } catch (err) {
     if (err.name === 'ValidationError') {
       const validationErr = err.errors
-
       const errorMessage = Object.keys(validationErr)
         .map((key) => `${key} is required`)
         .join(", ")
@@ -50,7 +72,7 @@ user_router.post('/register', async (req, res) => {
 })
 
 //login
-user_router.post('login', async (req, res) => {
+user_router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body
     const user = await User.findOne({ username })
@@ -59,17 +81,41 @@ user_router.post('login', async (req, res) => {
     }
     const isMatch = await user.validatePass(password)
     if (!isMatch) {
-      return res.json({
-        message: 'Invalid credentials'
-      })
+      return res.json({ message: 'Invalid credentials' })
     }
     const token = createToken(user)
-    res.cookie('token', token, { httpOnly: true })
-    res.send(user)//send user back to client
+
+    // Send token in the response instead of setting cookie
+    res.send({ user, token })
   } catch (err) {
     res.status(500).send(err)
   }
 })
+
+
+
+
+//login
+// user_router.post('login', async (req, res) => {
+//   try {
+//     const { username, password } = req.body
+//     const user = await User.findOne({ username })
+//     if (!user) {
+//       return res.status(404).send({ message: 'User not found' })
+//     }
+//     const isMatch = await user.validatePass(password)
+//     if (!isMatch) {
+//       return res.json({
+//         message: 'Invalid credentials'
+//       })
+//     }
+//     const token = createToken(user)
+//     res.cookie('token', token, { httpOnly: true })
+//     res.send(user)//send user back to client
+//   } catch (err) {
+//     res.status(500).send(err)
+//   }
+// })
 
 //logout
 user_router.post('/logout', (req, res) => {
