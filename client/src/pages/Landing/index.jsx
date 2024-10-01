@@ -40,6 +40,7 @@ const Landing = () => {
       if (data && data.login) {
         setAccessToken(data.login.accessToken); // Store access token in state
         console.log("Access Token Stored:", data.login.accessToken);
+        console.log("refresh token ", data.login)
       }
     } else {
       const { data } = await registerUser();
