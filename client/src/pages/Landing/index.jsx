@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 //import LOGIN_USER, REGISTER_USER
 import { LOGIN, REGISTER } from "../../graphql/mutations/authMutations";
 import "./landing.css";
@@ -23,6 +24,8 @@ const Landing = () => {
     password: "",
   });
 
+  const navigate = useNavigate(); // Hook for navigation
+
   //mutations
   const [loginUser] = useMutation(LOGIN, {
     variables: loginData,
@@ -41,9 +44,11 @@ const Landing = () => {
         setAccessToken(data.login.accessToken); // Store access token in state
         console.log("Access Token Stored:", data.login.accessToken);
         console.log("refresh token ", data.login)
+        navigate("/dashboard");
       }
     } else {
       const { data } = await registerUser();
+      navigate("/dashboard");
     }
   };
 
