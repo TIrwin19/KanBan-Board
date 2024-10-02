@@ -115,7 +115,7 @@ const resolvers = {
       return project;
     },
 
-    register: async (parent, { username, email, password }) => {
+    register: async (parent, { username, email, password }, context) => {
 
       // console.log('Reg Password entered:', password);
 
@@ -203,6 +203,7 @@ const resolvers = {
     },
 
     logout: (parent, args, context) => {
+      console.log('back end logout')
       context.res.clearCookie('refreshToken');
       return true;
     },

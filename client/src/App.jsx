@@ -1,20 +1,20 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ProjectPage from "./graphql/ProjectPage";
 // import KanbanBoard from "./pages/test";
 import Landing from "./pages/Landing";
-
+import Dashboard from "./pages/Dashboard"
 
 
 
 function App() {
   return (
-    <div>
-      <h1>My Project Management App</h1>
-      {/* <ProjectPage projectId="1" /> */}
-      {/* <KanbanBoard /> */}
-      {/* Example project page */}
-      <Landing />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
   );
 }
 
