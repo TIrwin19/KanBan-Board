@@ -1,49 +1,55 @@
-import React, { useState } from 'react'
-//graphql CREATE_PROJECT , 
-import { CREATE_PROJECT } from '../../graphql/mutations/projectMutations'
-import { LOGOUT } from '../../graphql/mutations/authMutations'
-
-import { useMutation } from '@apollo/client'
-
+import React, { useState } from 'react';
+import { CREATE_PROJECT } from '../../graphql/mutations/projectMutations';
+import { LOGOUT } from '../../graphql/mutations/authMutations';
+import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Header = () => {
-    const [logout] = useMutation(LOGOUT)
+    const { setAccessToken } = useAuth(); // Access setAccessToken from context
+    const navigate = useNavigate();
 
-    const [isCreating, setIsCreating] = useState(false)
-    const [projectName, setProjectName] = useState('')
+    const [logout] = useMutation(LOGOUT);
+
+    const [isCreating, setIsCreating] = useState(false);
+    const [projectName, setProjectName] = useState('');
 
     const [createProject] = useMutation(CREATE_PROJECT, {
         onCompleted: (data) => {
-            console.log('Project created', data)
-            setIsCreating(false)
-            setProjectName('')
+            console.log('Project created', data);
+            setIsCreating(false);
+            setProjectName('');
         }
-    })
+    });
 
     const handleLogout = async () => {
         try {
-            await logout()
-            console.log('frontend logout')
+            await logout();
+            console.log('frontend logout');
+
+            // Clear access token from context
+            setAccessToken(null);
+
+            // Navigate to the login page or home
+            navigate('/');
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
 
     const handleCreateProjectClick = () => {
-        setIsCreating(true)
-    } //this turns it into a form to type in the project name
+        setIsCreating(true);
+    };
 
     const handleCreateProject = () => {
         if (projectName.trim() !== '') {
             createProject({
-                variable: {
+                variables: {
                     title: projectName
                 }
-            })
+            });
         }
-    }
-
-
+    };
 
     return (
         <>
@@ -80,11 +86,8 @@ const Header = () => {
                     Logout
                 </button>
             </header>
-
         </>
+    );
+};
 
-    )
-}
-
-
-export default Header
+export default Header;

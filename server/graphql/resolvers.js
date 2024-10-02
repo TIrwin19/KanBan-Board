@@ -194,9 +194,16 @@ const resolvers = {
         throw new Error('Not authenticated');
       }
       try {
+        // Verify the refresh token
         const decoded = verify(refreshToken, REFRESH_SECRET);
+        // Generate a new access token
         const accessToken = sign({ id: decoded.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-        return { accessToken, user: { id: decoded.id } };
+
+        return {
+          accessToken,
+          user: { id: decoded.id }
+        };
+
       } catch (error) {
         throw new Error('Invalid or expired refresh token');
       }
@@ -204,7 +211,12 @@ const resolvers = {
 
     logout: (parent, args, context) => {
       console.log('back end logout')
-      context.res.clearCookie('refreshToken');
+
+      context.res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict',
+      });
       return true;
     },
   },

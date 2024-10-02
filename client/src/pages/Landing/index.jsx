@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 //import LOGIN_USER, REGISTER_USER
 import { LOGIN, REGISTER } from "../../graphql/mutations/authMutations";
 import "./landing.css";
 
 const Landing = () => {
+
+
   const [login, setLogin] = useState(true); // assume that user has an account and login shown as default
 
   const [actionType, setActionType] = useState("login");
   //formdata
 
-  const [accessToken, setAccessToken] = useState(null); //Access token
+  const { accessToken, setAccessToken } = useAuth() //Access token
 
   const [loginData, setLoginData] = useState({
     username: "",
@@ -42,8 +45,10 @@ const Landing = () => {
       const { data } = await loginUser();
       if (data && data.login) {
         setAccessToken(data.login.accessToken); // Store access token in state
+
         console.log("Access Token Stored:", data.login.accessToken);
         console.log("refresh token ", data.login)
+
         navigate("/dashboard");
       }
     } else {
