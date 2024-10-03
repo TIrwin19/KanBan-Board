@@ -23,7 +23,6 @@ const Dashboard = () => {
     return (
         <>
             <Header />
-            <h2>Your Projects</h2>
             <ProjectCard />
 
         </>
