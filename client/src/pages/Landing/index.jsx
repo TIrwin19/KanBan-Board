@@ -10,11 +10,10 @@ const Landing = () => {
 
 
   const [login, setLogin] = useState(true); // assume that user has an account and login shown as default
-
   const [actionType, setActionType] = useState("login");
   //formdata
 
-  const { accessToken, setAccessToken } = useAuth() //Access token
+  const { setAccessToken } = useAuth() //Access token
 
   const [loginData, setLoginData] = useState({
     username: "",
@@ -43,17 +42,21 @@ const Landing = () => {
     e.preventDefault();
     if (actionType === "login") {
       const { data } = await loginUser();
+
       if (data && data.login) {
         setAccessToken(data.login.accessToken); // Store access token in state
-
         console.log("Access Token Stored:", data.login.accessToken);
-        console.log("refresh token ", data.login)
 
         navigate("/dashboard");
       }
-    } else {
+    } else if (actionType === "register") {
       const { data } = await registerUser();
-      navigate("/dashboard");
+      if (data && data.register) {
+        setAccessToken(data.register.accessToken); // Store access token in state
+        console.log("Access Token Stored:", data.register.accessToken);
+
+        navigate("/dashboard");
+      }
     }
   };
 
