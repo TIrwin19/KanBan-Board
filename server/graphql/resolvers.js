@@ -142,7 +142,7 @@ const resolvers = {
       return {
         accessToken,
         user: {
-          id: newUser._id,
+          // id: newUser._id,
           username: newUser.username,
           email: newUser.email,
         },
@@ -188,7 +188,10 @@ const resolvers = {
     },
 
     refreshAccessToken: (parent, args, context) => {
+      console.log('refresh triggered')
+      console.log('context:', context.req.cookies)
       const { refreshToken } = context.req.cookies;
+      console.log('refreshToken:', refreshToken)
 
       if (!refreshToken) {
         throw new Error('Not authenticated');

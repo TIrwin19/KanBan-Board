@@ -67,6 +67,7 @@ async function startApolloServer() {
     server.listen(PORT, () => {
         // listen requests on the specified port
         console.log(`Server running on port ${PORT}`);
+        
     });
 }
 
