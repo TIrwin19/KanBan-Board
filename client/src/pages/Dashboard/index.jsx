@@ -23,16 +23,30 @@ const Dashboard = () => {
 
   return (
     <>
-        <Header />
-        <div className="p-8">
-            <div className="grid grid-cols-4 gap-4">
-            <Welcome />
-            <Calendar />
-            <ProjectCard />
-            <OngoingProjects />
-            <ProjectsDue />
-            </div>
+      <Header />
+   
+
+      <div class="grid grid-cols-5 grid-rows-5 gap-0">
+        <div class="col-start-1 col-end-4 row-start-1 row-end-2">
+          {" "}
+          <Welcome />
         </div>
+        <div class="col-start-5 col-end-6 row-start-1 row-end-2">
+          {" "}
+          <Calendar />
+        </div>
+        <div class="col-start-1 col-end-3 row-start-2 row-end-3">
+          {" "}
+          <ProjectCard />
+        </div>
+        <div class="col-start-5 col-end-6 row-start-2 row-end-3">
+          {" "}
+          <OngoingProjects />
+        </div>
+        <div class="col-start-1 col-end-4 row-start-3 row-end-4">
+          <ProjectsDue />
+        </div>
+      </div>
     </>
   );
 };
