@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import Calendar from 'react-calendar'
-import 'react-calendar/dist/Calendar.css';
+import './calendar.css'
 
- export default function CalendarComponent() {
-    return (
-        <div className="bg-green-100 p-4 rounded-lg shadow-md">
-          <Calendar />
-        </div>
-    )
-  }
+export default function CalendarComponent() {
+
+  return (
+    <div>
+      <Calendar calendarType='gregory' />
+    </div>
+  )
+}
 
 
 

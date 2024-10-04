@@ -13,8 +13,9 @@ const resolvers = {
   Query: {
     // Auth resolver
     getUser: async (parent, args, context) => {
-      const { req } = context;
-      const token = req.cookies?.accessToken;
+      const token = context.req.headers.accessToken?.split(" ")[1];  // Get token from Authorization header
+      console.log('token:', token)
+      console.log('context:', context.req.headers)
 
       if (!token) {
         throw new Error('Not authenticated');
@@ -142,7 +143,7 @@ const resolvers = {
       return {
         accessToken,
         user: {
-          // id: newUser._id,
+          id: newUser._id,
           username: newUser.username,
           email: newUser.email,
         },
@@ -180,7 +181,7 @@ const resolvers = {
       return {
         accessToken,
         user: {
-          // id: user._id,
+          id: user._id,
           username: user.username,
           email: user.email,
         },
@@ -188,8 +189,8 @@ const resolvers = {
     },
 
     refreshAccessToken: (parent, args, context) => {
-      console.log('refresh triggered')
-      console.log('context:', context.req.cookies)
+      // console.log('refresh triggered')
+      // console.log('context:', context.req.cookies)
       const { refreshToken } = context.req.cookies;
       console.log('refreshToken:', refreshToken)
 
