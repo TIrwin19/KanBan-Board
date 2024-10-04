@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* global margin resetters */
+body {
+    background-color: #EDF0FA;
+
+}

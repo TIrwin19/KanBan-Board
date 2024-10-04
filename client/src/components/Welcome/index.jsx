@@ -1,18 +1,25 @@
 import React, { useState } from 'react'
+import { useQuery } from '@apollo/client'
+import { GET_USER } from '../../graphql/queries/authQuerie';
 
+export default function Welcome() {
 
- export default function Welcome() {
-    return (
-        <div className="col-span-3 bg-blue-100 p-4 rounded-lg shadow-md">
-          <div className="bg-white rounded-lg p-4 shadow-sm grid grid-cols-3 gap-4">
-            <div className="bg-blue-400 rounded-lg p-4 shadow-md hover:bg-blue-500 transition-colors">
-              WELCOME USER
-            </div>
-          </div>
-          has two buttons in section "Your Projects" and " Team Projects"
-        </div>
-    )
+  const { loading, error, data } = useQuery(GET_USER)
+
+  if (loading) return <p>Loading...</p>;
+  if (error) {
+    console.error("The fucking error fetching user data is :", error)
+    return <p>Error fetching user data.</p>
   }
+  const username = data.getUser.username
+
+
+  return (
+    <div className="">
+      {`WELCOME ${username.toUpperCase()}`}
+    </div>
+  )
+}
 
 
 
