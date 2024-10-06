@@ -11,6 +11,7 @@ type User {
 
 type AuthPayload {
     accessToken: String!
+    refreshToken: String!
     user: User!
   }
 
@@ -58,7 +59,7 @@ type Mutation {
 
   register(username: String!, email: String!, password: String!): AuthPayload!
   login(username: String!, password: String!): AuthPayload!
-  refreshAccessToken: AuthPayload!
+  refreshAccessToken:(refreshToken: String!): AuthPayload!
   logout: Boolean!
     
   # createColumn(title: String!, order: Int!): Column!

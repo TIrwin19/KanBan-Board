@@ -9,6 +9,7 @@ const mongoose = require('./config/client')
 const resolvers = require('./graphql/resolvers')
 const typeDefs = require('./graphql/typedefs')
 // const auth_router = require('./routes/auth_routes_test')
+const { router } = require('./routes/protected_routes')
 
 
 
@@ -34,7 +35,8 @@ app.use(express.json()) // Built-in middleware to parse incoming JSON request bo
 // Use the authentication routes at the /auth endpoint
 // app.use('/auth', auth_router); // This integrates the authentication routes for registration, login, logout, etc.
 
-
+// middleware for protected routes
+app.use('/protected', router)
 
 // start apollo server
 async function startApolloServer() {
@@ -67,7 +69,7 @@ async function startApolloServer() {
     server.listen(PORT, () => {
         // listen requests on the specified port
         console.log(`Server running on port ${PORT}`);
-        
+
     });
 }
 
