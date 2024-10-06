@@ -28,19 +28,19 @@ const userSchema = new Schema({
     }
 })
 
-userSchema.methods.toJSON = function () {
-    const user = this.toObject();
+// userSchema.methods.toJSON = function () {
+//     const user = this.toObject();
 
-    delete user.password;
+//     delete user.password;
 
-    return user;
-}
+//     return user;
+// }
 
-userSchema.methods.validatePass = async function (formPassword) {
-    const valid = await compare(formPassword, this.password)
+// userSchema.methods.validatePass = async function (formPassword) {
+//     const valid = await compare(formPassword, this.password)
 
-    return valid
-}
+//     return valid
+// }
 
 // userSchema.pre('save', async function (next) {
 //     if (this.isNew) {
