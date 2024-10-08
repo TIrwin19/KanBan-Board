@@ -1,21 +1,15 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "./contexts/AuthContext";
+import { useAuth } from "./contexts/AuthContext"; // Import the Auth context
 
 const ProtectedRoute = ({ children }) => {
-  const { accessToken, loading } = useAuth();
+  const { isAuthenticated } = useAuth(); // Check if user is authenticated
 
-  // Show loading state if we're still refreshing the token
-  if (loading) {
-    return <div>Loading...</div>; // Or some custom loading component
+  if (!isAuthenticated()) {
+    return <Navigate to="/" replace />; // Redirect to the landing page if not authenticated
   }
 
-  // If no accessToken, redirect to login
-  if (!accessToken) {
-    return <Navigate to="/login" />;
-  }
-
-  return children;
+  return children; // Render the protected component if authenticated
 };
 
 export default ProtectedRoute;

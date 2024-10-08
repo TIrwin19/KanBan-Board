@@ -33,6 +33,10 @@ type Column {
 
 }
 
+type AccessTokenPayload {
+    accessToken: String
+  }
+
 type Project {
   id: ID!
   title: String!
@@ -59,19 +63,9 @@ type Mutation {
 
   register(username: String!, email: String!, password: String!): AuthPayload!
   login(username: String!, password: String!): AuthPayload!
-  refreshAccessToken:(refreshToken: String!): AuthPayload!
+  refreshAccessToken(refreshToken: String!): AccessTokenPayload!
   logout: Boolean!
-    
-  # createColumn(title: String!, order: Int!): Column!
-  # updateColumn(id: ID!, title: String): Column!
-  # deleteColumn(id: ID!): Boolean!
-
-  # createTask(title: String!, description: String, order: Int!, columnId: ID!): Task!
-  # updateTask(id: ID!, title: String, description: String, order: Int!, columnId: ID!): Task!
-  # deleteTask(id: ID!): Boolean
-
-  # moveTask(taskId: ID!, columnId: ID!, order: Int!): Task!
 }
-`
+`;
 
 module.exports = typeDefs
