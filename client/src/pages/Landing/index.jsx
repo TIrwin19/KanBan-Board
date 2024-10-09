@@ -51,14 +51,20 @@ const Landing = () => {
   };
   // Dynamic form fields for both login and registration
   return (
-    <div className="auth-container">
-      <h1>{actionType === "login" ? "Login" : "Register"}</h1>
-      <form onSubmit={handleAction}>
-        <div>
-          <label className="text-gray-700">Username</label>
+    <div className="flex flex-col items-center auth-container">
+      <form
+        className="mt-10 w-5/6 flex flex-col items-center"
+        onSubmit={handleAction}
+      >
+        <h1 className="text-3xl mb-5">
+          {actionType === "login" ? "Login" : "Register"}
+        </h1>
+
+        <label className="text-gray-700">
+          <span className="text-grey-700">Username</span>
           <input
             type="text"
-            className="mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
+            className="mt-1 block w-full rounded-md bg-gray-200 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
             placeholder="Enter your Username"
             value={formData.username}
             onChange={(e) =>
@@ -66,14 +72,14 @@ const Landing = () => {
             }
             required
           />
-        </div>
+        </label>
 
         {actionType === "register" && (
-          <div>
-            <label className="text-gray-700">Email</label>
+          <label className="text-gray-700">
+            <span className="text-grey-700">Email</span>
             <input
               type="email"
-              className="mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
+              className="mt-1 block w-full rounded-md bg-gray-200 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
               placeholder="john@example.com"
               value={formData.email}
               onChange={(e) =>
@@ -81,14 +87,14 @@ const Landing = () => {
               }
               required={actionType === "register"}
             />
-          </div>
+          </label>
         )}
 
-        <div>
-          <label className="text-gray-700">Password</label>
+        <label className="text-gray-700">
+          <span className="text-grey-700">Password</span>
           <input
             type="password"
-            className="mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
+            className="mt-1 block w-full rounded-md bg-gray-200 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
             placeholder="Enter your password"
             value={formData.password}
             onChange={(e) =>
@@ -96,11 +102,11 @@ const Landing = () => {
             }
             required
           />
-        </div>
+        </label>
 
         <button
           type="submit"
-          className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+          className="mt-4 w-fit bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600"
         >
           {actionType === "login" ? "Login" : "Register"}
         </button>

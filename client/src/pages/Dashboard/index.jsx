@@ -49,7 +49,7 @@ const Dashboard = () => {
             isDiv6Expanded ? "col-span-3 col-start-2" : "col-span-4 col-start-1"
           } row-span-2 row-start-1 the-shadow border-2 text-[#1D3557] rounded-xl p-4 transition-all duration-500`}
         >
-          {/* <Welcome /> */}
+          <Welcome />
         </div>
 
         <div className="div3 row-span-2 col-start-5 row-start-4 the-shadow border-2 text-[#1D3557] rounded-xl p-4">
@@ -62,6 +62,7 @@ const Dashboard = () => {
           } row-span-2 row-start-3 the-shadow border-2 text-[#1D3557] rounded-xl p-4 transition-all duration-500`}
         >
           4 Project cards and shi
+          <ProjectCard />
         </div>
 
         <div className="div5 row-span-3 col-start-5 row-start-1 the-shadow border-2 text-[#1D3557] rounded-xl p-4">

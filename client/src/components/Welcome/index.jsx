@@ -12,5 +12,9 @@ export default function Welcome() {
   }
   const username = data.getUser.username;
 
-  return <div className="">{`WELCOME ${username.toUpperCase()}`}</div>;
+  return (
+    <>
+      <div className="">{`WELCOME ${username.toUpperCase()}`}</div>
+    </>
+  );
 }

@@ -10,57 +10,62 @@ const AuthContext = createContext();
 // AuthProvider component to wrap the app
 export const AuthProvider = ({ children }) => {
   const client = useApolloClient(); // Apollo client to perform queries
-  const [accessToken, setAccessToken] = useState(null); // Store accessToken in state
+  const [loadingState, setLoadingState] = useState(true); // Track overall loading state
+  const [user, setUser] = useState(null); // Store user info in state
 
   // Use the getUser query
   const { data, loading, error } = useQuery(GET_USER, {
     fetchPolicy: "no-cache", // Prevent caching to always get fresh data
-    skip: !client, // Skip the query until the client is ready
   });
 
-  // Function to log the user in (not using token directly since it's in HttpOnly cookie)
-  const login = (token) => {
-    setAccessToken(token); // Optional: This might not be necessary since we won't directly access the token
-    console.log("User logged in"); // Simplified logging
-  };
-
-  // Function to log the user out (clear the access token)
-  const logout = () => {
-    setAccessToken(null); // Clear the token
-    console.log("User logged out");
-
-    // Optionally make a request to your logout endpoint to clear server-side session
-    // await logoutUser();
-  };
-
-  // Check if the user is authenticated by verifying the token
-  const isAuthenticated = () => {
-    if (!accessToken) return false;
-
-    try {
-      const decodedToken = jwtDecode(accessToken);
-      // Check if token is expired (optional depending on token structure)
-      return decodedToken.exp * 1000 > Date.now();
-    } catch (error) {
-      console.error("Token verification error:", error);
-      return false;
-    }
-  };
-
-  // Effect to update the accessToken based on the cookie status
+  // Effect to handle changes in user data after query finishes
   useEffect(() => {
-    // Logic to check for the access token could be handled server-side
-    const checkAccessToken = async () => {
-      // Optionally, fetch the user info or check token validity here
-      // if token is valid, you can set it with setAccessToken()
-    };
+    if (loading) {
+      setLoadingState(true); // Set loading state to true when fetching
+      return;
+    }
 
-    checkAccessToken();
-  }, []);
+    if (error) {
+      console.error("Error checking user session:", error);
+      setUser(null); // If error, clear user state
+      setLoadingState(false); // Finished loading
+      return;
+    }
+
+    if (data?.getUser) {
+      setUser(data.getUser); // Set the user if found
+    } else {
+      setUser(null); // Clear user if not found
+    }
+
+    setLoadingState(false); // Set loading to false once done
+  }, [data, loading, error]);
+
+  // Function to log the user in (server handles setting the token in HttpOnly cookie)
+  const login = () => {
+    console.log("User logged in");
+    // No need to manage token here as it's in an HttpOnly cookie
+    client.refetchQueries({ include: [GET_USER] }); // Refetch user data on login
+  };
+
+  // Function to log the user out (clear session)
+  const logout = async () => {
+    setUser(null); // Clear the user state locally
+    await client.clearStore(); // Clear Apollo cache
+    console.log("User logged out");
+    //refresh the page to clear the cache
+    window.location.reload();
+  };
+
+  // Check if the user is authenticated by verifying the user state
+  const isAuthenticated = () => {
+    if (loadingState) return false; // Return false if still loading
+    return !!user; // Return true if user exists, false otherwise
+  };
 
   return (
     <AuthContext.Provider
-      value={{ accessToken, login, logout, isAuthenticated }}
+      value={{ user, login, logout, isAuthenticated, loading: loadingState }}
     >
       {children}
     </AuthContext.Provider>

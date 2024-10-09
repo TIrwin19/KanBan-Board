@@ -17,13 +17,12 @@ const resolvers = {
   Query: {
     // Auth resolver
     getUser: async (_, args, { req }) => {
-      // Get access token from headers
-      const authHeader = req.headers.authorization;
-      if (!authHeader) {
+      // Get access token from cookies
+      const token = req.cookies.accessToken;
+      if (!token) {
         throw new Error("Authentication required");
       }
 
-      const token = authHeader.split(" ")[1];
       try {
         const payload = verifyToken(token, process.env.ACCESS_TOKEN_SECRET);
         const user = await User.findById(payload.userId);
@@ -178,8 +177,6 @@ const resolvers = {
 
       return {
         user,
-        accessToken,
-        refreshToken,
       };
     },
 
