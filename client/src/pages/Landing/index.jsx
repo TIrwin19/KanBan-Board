@@ -2,143 +2,128 @@ import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-//import LOGIN_USER, REGISTER_USER
 import { LOGIN, REGISTER } from "../../graphql/mutations/authMutations";
 import "./landing.css";
 
 const Landing = () => {
-
-
-  const [login, setLogin] = useState(true); // assume that user has an account and login shown as default
   const [actionType, setActionType] = useState("login");
-  //formdata
 
-  const { setAccessToken } = useAuth() //Access token
+  const { login } = useAuth(); // Get login method from Auth context
 
-  const [loginData, setLoginData] = useState({
-    username: "",
-    password: "",
-  });
-
-  const [registerData, setRegisterData] = useState({
+  const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
 
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
-  //mutations
   const [loginUser] = useMutation(LOGIN, {
-    variables: loginData,
+    variables: {
+      username: formData.username,
+      password: formData.password,
+    },
   });
 
   const [registerUser] = useMutation(REGISTER, {
-    variables: registerData,
+    variables: {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+    },
   });
 
-  //handle login and register by using actionType
   const handleAction = async (e) => {
     e.preventDefault();
     if (actionType === "login") {
       const { data } = await loginUser();
-
       if (data && data.login) {
-        setAccessToken(data.login.accessToken); // Store access token in state
-        console.log("Access Token Stored:", data.login.accessToken);
-
+        login(data.login.accessToken); // Use login method to store the token
         navigate("/dashboard");
       }
     } else if (actionType === "register") {
       const { data } = await registerUser();
       if (data && data.register) {
-        setAccessToken(data.register.accessToken); // Store access token in state
-        console.log("Access Token Stored:", data.register.accessToken);
-
+        login(data.register.accessToken); // Use login method to store the token
         navigate("/dashboard");
       }
     }
   };
-
+  // Dynamic form fields for both login and registration
   return (
-    <>
-      <div>
-        <h1>{actionType === "login" ? "Login" : "Register"}</h1>
-        <form onSubmit={handleAction}>
-          <div className="text-gray-700">Username</div>
+    <div className="flex flex-col items-center auth-container">
+      <form
+        className="mt-10 w-5/6 flex flex-col items-center"
+        onSubmit={handleAction}
+      >
+        <h1 className="text-3xl mb-5">
+          {actionType === "login" ? "Login" : "Register"}
+        </h1>
+
+        <label className="text-gray-700">
+          <span className="text-grey-700">Username</span>
           <input
             type="text"
-            className="mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
+            className="mt-1 block w-full rounded-md bg-gray-200 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
             placeholder="Enter your Username"
-            value={
-              actionType === "login"
-                ? loginData.username
-                : registerData.username
-            }
+            value={formData.username}
             onChange={(e) =>
-              actionType === "login"
-                ? setLoginData({ ...loginData, username: e.target.value })
-                : setRegisterData({ ...registerData, username: e.target.value })
+              setFormData({ ...formData, username: e.target.value })
             }
             required
           />
+        </label>
 
-          {actionType === "register" && (
-            <>
-              <div className="text-gray-700">Email</div>
-              <input
-                type="email"
-                className="mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
-                placeholder="john@example.com"
-                value={registerData.email}
-                onChange={(e) =>
-                  setRegisterData({ ...registerData, email: e.target.value })
-                }
-                required
-              />
-            </>
-          )}
+        {actionType === "register" && (
+          <label className="text-gray-700">
+            <span className="text-grey-700">Email</span>
+            <input
+              type="email"
+              className="mt-1 block w-full rounded-md bg-gray-200 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
+              placeholder="john@example.com"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              required={actionType === "register"}
+            />
+          </label>
+        )}
 
-          <div className="text-gray-700">Password</div>
+        <label className="text-gray-700">
+          <span className="text-grey-700">Password</span>
           <input
             type="password"
-            className="mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
+            className="mt-1 block w-full rounded-md bg-gray-200 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
             placeholder="Enter your password"
-            value={
-              actionType === "login"
-                ? loginData.password
-                : registerData.password
-            }
+            value={formData.password}
             onChange={(e) =>
-              actionType === "login"
-                ? setLoginData({ ...loginData, password: e.target.value })
-                : setRegisterData({ ...registerData, password: e.target.value })
+              setFormData({ ...formData, password: e.target.value })
             }
             required
           />
+        </label>
 
-          <button
-            type="submit"
-            className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-          >
-            {actionType === "login" ? "Login" : "Register"}
-          </button>
+        <button
+          type="submit"
+          className="mt-4 w-fit bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600"
+        >
+          {actionType === "login" ? "Login" : "Register"}
+        </button>
 
-          <button
-            type="button"
-            className="mt-2 w-full text-blue-500 underline"
-            onClick={() => {
-              setLogin(!login);
-              setActionType(login ? "register" : "login");
-            }}
-          >
-            {actionType === "login"
-              ? "Don't have an account? Register"
-              : "Already have an account? Login"}
-          </button>
-        </form>
-      </div>
-    </>
+        <button
+          type="button"
+          className="mt-2 w-full text-blue-500 underline"
+          onClick={() =>
+            setActionType(actionType === "login" ? "register" : "login")
+          }
+        >
+          {actionType === "login"
+            ? "Don't have an account? Register"
+            : "Already have an account? Login"}
+        </button>
+      </form>
+    </div>
   );
 };
 
