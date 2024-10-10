@@ -4,7 +4,9 @@ export const GET_PROJECT = gql`
   query GetProject($getProjectId: ID!) {
     getProject(id: $getProjectId) {
       title
-      members
+      members {
+        username
+      }
       id
       columns {
         title

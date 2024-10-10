@@ -1,45 +1,56 @@
 import React, { useState } from "react";
 import "./projectcard.css";
+import { useQuery } from "@apollo/client";
+import { GET_PROJECT } from './../../graphql/queries/projectQueries';
 
-const cards = [
-  { title: "Task 1", description: "Description 1", members: "Member A" },
-  {
-    title: "Task 2",
-    description: "overflowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
-    members: "Member B",
-  },
-  { title: "Task 3", description: "Description 3", members: "Member C" },
-  { title: "Task 4", description: "Description 4", members: "Member D" }, // Additional card for carousel
-];
+// const cards = [
+//   { title: "Task 1", description: "Description 1", members: "Member A" },
+//   {
+//     title: "Task 2",
+//     description: "Description 2 muhsin gay",
+//     members: "Member B",
+//   },
+//   { title: "Task 3", description: "Description 3", members: "Member C" },
+//   { title: "Task 4", description: "Description 4", members: "Member D" }, // Additional card for carousel
+// ];
 
 const ProjectCard = () => {
-  const [startIndex, setStartIndex] = useState(0);
+  const { loading, error, data } = useQuery(GET_PROJECT)
 
-  const handleNext = () => {
-    setStartIndex((prevIndex) => (prevIndex + 3) % cards.length);
-  };
+  if (loading) return <p>Loading...</p>
+  if (error) {
+    console.error("error fetching projects:", error)
+    return <p>Error fetching projects.</p>
+  }
+  const cards = data.getProject
 
-  const handlePrev = () => {
-    setStartIndex((prevIndex) =>
-      prevIndex - 3 < 0 ? cards.length - 3 : prevIndex - 3
-    );
-  };
+  // const [startIndex, setStartIndex] = useState(0);
+
+  // const handleNext = () => {
+  //   setStartIndex((prevIndex) => (prevIndex + 3) % cards.length);x
+  // };
+
+  // const handlePrev = () => {
+  //   setStartIndex((prevIndex) =>
+  //     prevIndex - 3 < 0 ? cards.length - 3 : prevIndex - 3
+  //   );
+  // };
 
   // Slicing array of cards to show only 3 at a time
-  const visibleCards = cards.slice(startIndex, startIndex + 3);
+  // const visibleCards = cards.slice(startIndex, startIndex + 3);
 
   return (
-    <div>
-      <div className="grid grid-cols-3 gap-4">
-        {visibleCards.map((card, index) => (
+    <div className="relative overflow-x-scroll scrollbar-hide">
+      <div className="flex space-x-4">
+        {cards.map((card, index) => (
           <div
             key={index}
-            className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+            className="flex flex-col p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 min-h-[250px] max-h-[250px] min-w-[200px] max-w-[200px]"
           >
             <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               {card.title}
             </h5>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+            <p className="flex-grow mb-3 font-normal text-gray-700 dark:text-gray-400 break-words">
               {card.description}
             </p>
             {/* <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -71,7 +82,7 @@ const ProjectCard = () => {
       </div>
 
       {/* Carousel Controls */}
-      <div className="flex justify-between mt-4">
+      {/* <div className="flex justify-between mt-4">
         <button
           onClick={handlePrev}
           className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
@@ -84,7 +95,7 @@ const ProjectCard = () => {
         >
           Next
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

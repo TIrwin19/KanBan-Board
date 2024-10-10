@@ -27,6 +27,7 @@ const Header = () => {
     await logoutMutation();
     navigate("/"); // Redirect to landing page
   };
+
   const handleCreateProjectClick = () => {
     setIsCreating(true);
   };
