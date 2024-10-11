@@ -39,7 +39,7 @@ const typeDefs = gql`
   type Project {
     id: ID!
     title: String!
-    members: [ID!]!
+    members: [User!]!
     columns: [Column!]!
   }
 
@@ -49,7 +49,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createProject(title: String!, members: [ID!]!): Project!
+    createProject(title: String!): Project!
     deleteProject(projectId: ID!): Boolean!
 
     createColumn(projectId: ID!, title: String!, order: Int!): Column!

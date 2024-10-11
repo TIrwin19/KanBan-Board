@@ -40,6 +40,30 @@ const resolvers = {
   },
 
   Mutation: {
+    createProject: async (_, { title }) => {
+      console.log('made it')
+      try {
+        // // Ensure the user is authenticated (assuming user object is passed in context)
+        // if (!user) {
+        //   throw new AuthenticationError('You must be logged in to create a project');
+        // }
+
+        // Create the new project
+        const newProject = new Project({
+          title,
+          // members: [user._id], // Assuming the authenticated user is the admin/creator
+          // columns: [], // Initial empty column list
+        });
+
+        // Save the project to the database
+        await newProject.save();
+
+        return newProject;
+      } catch (err) {
+        throw new Error('Failed to create project: ' + err.message);
+      }
+    },
+
     createColumn: async (_, { projectId, title, order }) => {
       const project = await Project.findById(projectId);
       const column = { title, order, tasks: [] };
