@@ -61,7 +61,10 @@ const projectSchema = new Schema({
     required: true,
   },
 
-  // admin?
+  admin: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
 
   members: [{
     type: Schema.Types.ObjectId,
