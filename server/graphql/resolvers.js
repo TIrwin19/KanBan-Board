@@ -34,23 +34,34 @@ const resolvers = {
     },
 
     // Get Project
-    getProject: async (_, { id }) => {
-      return await Project.findById(id);
+    getAdminProject: async (_, { adminId }) => {
+      console.log('made it to get admin projects')
+      // const admin = await User.findById(adminId)
+      if (!adminId) throw new Error('No admin provided.')
+
+      const currentAdminProjects = await Project.find({ admin: adminId }).populate("admin")
+
+      return currentAdminProjects
     },
   },
 
   Mutation: {
-    createProject: async (_, { title }) => {
-      console.log('made it')
+    createProject: async (_, { title, admin }) => {
+      console.log('project Created')
       try {
-        // // Ensure the user is authenticated (assuming user object is passed in context)
-        // if (!user) {
-        //   throw new AuthenticationError('You must be logged in to create a project');
-        // }
+        // Ensure the user is authenticated (assuming user object is passed in context)
+        if (!admin) {
+          throw new AuthenticationError('You must be logged in to create a project');
+        }
+        const projectAdmin = await User.findById(admin)
+        if (!projectAdmin) {
+          throw new Error('Admin user not found')
+        }
 
         // Create the new project
         const newProject = new Project({
           title,
+          admin: projectAdmin
           // members: [user._id], // Assuming the authenticated user is the admin/creator
           // columns: [], // Initial empty column list
         });

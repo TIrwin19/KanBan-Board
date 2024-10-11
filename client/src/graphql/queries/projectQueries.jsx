@@ -1,31 +1,12 @@
 import { gql } from "@apollo/client";
 
-export const GET_PROJECT = gql`
-  query GetProject($getProjectId: ID!) {
-    getProject(id: $getProjectId) {
-      title
-      members {
-        username
-      }
+export const GET_ADMIN_PROJECT = gql`
+  query GetAdminProject($adminId: ID!) {
+    getAdminProject(adminId: $adminId) {
       id
-      columns {
-        title
-
-        tasks {
-          date
-          description
-          id
-          order
-          status
-          title
-
-          user {
-            username
-          }
-        }
-
-        order
-        id
+      title
+      admin {
+        username
       }
     }
   }

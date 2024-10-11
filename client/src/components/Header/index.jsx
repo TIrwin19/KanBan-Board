@@ -6,7 +6,7 @@ import { useMutation } from "@apollo/client";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Header = () => {
-  const { logout } = useAuth(); // Access setAccessToken from context
+  const { user, logout } = useAuth(); // Access setAccessToken from context
   const navigate = useNavigate();
 
   const [logoutMutation] = useMutation(LOGOUT);
@@ -37,6 +37,7 @@ const Header = () => {
       createProject({
         variables: {
           title: projectName,
+          admin: user.id,
         },
       });
     }
@@ -69,13 +70,6 @@ const Header = () => {
             Create Project
           </button>
         )}
-
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 px-4 py-2 rounded hover:bg-red-600 transition-all duration-300 ease-in-out"
-        >
-          Logout
-        </button>
       </header>
     </>
   );
