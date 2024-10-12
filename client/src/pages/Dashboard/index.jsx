@@ -28,7 +28,7 @@ const Dashboard = () => {
         {/* div6 */}
         <div
           className={`div6 fixed top-0 left-0 ${
-            isDiv6Expanded ? "w-1/5" : "w-0"
+            isDiv6Expanded ? "w-0" : "w-1/6"
           } h-full the-shadow border-2 text-[#363636] rounded-xl p-0 transition-all duration-500 ease-in-out shadow-lg overflow-hidden `}
         >
           {isDiv6Expanded && <div className="pt-10">6</div>}
@@ -38,16 +38,16 @@ const Dashboard = () => {
         <button
           onClick={toggleDiv6}
           className={`absolute top-4 ${
-            isDiv6Expanded ? "left-[20%]" : "left-3"
+            isDiv6Expanded ? "left-7" : "left-[15%]"
           } transform -translate-x-1/2 button-color text-white p-2 rounded-full z-20 transition-all duration-500`}
         >
-          {isDiv6Expanded ? "◀" : "➔"}
+          {isDiv6Expanded ? "➔" : "◀"}
         </button>
 
         {/* Other Divs */}
         <div
           className={`div1 ${
-            isDiv6Expanded ? "col-span-3 col-start-2" : "col-span-4 col-start-1"
+            isDiv6Expanded ? "col-span-4 col-start-1" : "col-span-3 col-start-2"
           } row-span-2 row-start-1 the-shadow border-2 text-[#363636] rounded-xl p-4 transition-all duration-500`}
         >
           <div className="inner-grid grid grid-cols-2 grid-rows-2  gap-2 h-full">
@@ -71,10 +71,11 @@ const Dashboard = () => {
 
         <div
           className={`div4 ${
-            isDiv6Expanded ? "col-span-2 col-start-2" : "col-span-3 col-start-1"
+            isDiv6Expanded ? "col-span-4 col-start-1" : "col-span-3 col-start-2"
           } row-span-2 row-start-3 the-shadow border-2 text-[#363636] rounded-xl p-4 transition-all duration-500`}
         >
-          <div className="flex flex-col gap-2 h-full">
+          <span className="text-2xl font-bold">Your Projects</span>
+          <div className="flex flex-col gap-2 h-full pt-2">
             <div className="item1 flex-2">
               {" "}
               <ProjectCard />

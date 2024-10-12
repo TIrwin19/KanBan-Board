@@ -35,8 +35,6 @@ const resolvers = {
 
     // Get Project
     getAdminProject: async (_, { adminId }) => {
-      console.log('made it to get admin projects')
-      // const admin = await User.findById(adminId)
       if (!adminId) throw new Error('No admin provided.')
 
       const currentAdminProjects = await Project.find({ admin: adminId }).populate("admin")
@@ -47,7 +45,6 @@ const resolvers = {
 
   Mutation: {
     createProject: async (_, { title, admin }) => {
-      console.log('project Created')
       try {
         // Ensure the user is authenticated (assuming user object is passed in context)
         if (!admin) {
