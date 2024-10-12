@@ -4,7 +4,6 @@
 
 /* global margin resetters */
 body {
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 14px 16px 14px;
   background-color: #353535;
 }

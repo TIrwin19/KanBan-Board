@@ -13,7 +13,7 @@ export default function Welcome() {
 
   if (loading) return <p>Loading...</p>;
   if (error) {
-    console.error("The fucking error fetching user data is :", error);
+    console.error("Error fetching user data:", error);
     return <p>Error fetching user data.</p>;
   }
   const username = data.getUser.username;

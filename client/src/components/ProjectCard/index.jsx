@@ -9,6 +9,7 @@ const ProjectCard = () => {
   console.log(user.id);
   const { loading, error, data } = useQuery(GET_ADMIN_PROJECT, {
     variables: { adminId: user.id },
+    pollInterval: 500,
   });
 
   if (loading) return <p>Loading...</p>;
