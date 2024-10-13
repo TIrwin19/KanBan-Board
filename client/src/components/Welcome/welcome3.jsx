@@ -2,6 +2,7 @@ import { CREATE_PROJECT } from "../../graphql/mutations/projectMutations";
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useMutation } from "@apollo/client";
+import { PlusIcon } from "@heroicons/react/outline"; 
 
 const Welcome3 = () => {
   const { user } = useAuth();
@@ -52,8 +53,9 @@ const Welcome3 = () => {
       ) : (
         <button
           onClick={handleCreateProjectClick}
-          className="bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition-all duration-300 ease-in-out"
+          className="flex items-center gap-2 bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition-all duration-300 ease-in-out"
         >
+          <PlusIcon className="h-5 w-5" /> 
           Create Project
         </button>
       )}

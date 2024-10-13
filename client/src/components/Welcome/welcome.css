@@ -1,0 +1,64 @@
+/* Gradient animation */
+@keyframes gradient-xy {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.animate-gradient-xy {
+    background-size: 300% 300%;
+    animation: gradient-xy 5s ease infinite;
+}
+
+/* Typing animation */
+.typing-animation {
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 4px solid;
+    animation: typing 3s steps(30) forwards, blink 0.75s step-end infinite;
+    display: inline-block;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes blink {
+    50% {
+        border-color: transparent;
+    }
+}
+
+/* Responsive design for different screen sizes */
+@media (max-width: 640px) {
+    .typing-animation {
+        font-size: 1rem;
+        /* Smaller font size for mobile */
+    }
+}
+
+@media (min-width: 640px) and (max-width: 1024px) {
+    .typing-animation {
+        font-size: 1rem;
+        /* Intermediate screen size adjustments */
+    }
+}
+
+@media (min-width: 1024px) {
+    .typing-animation {
+        font-size: 4rem;
+        /* Larger screen sizes */
+    }
+}

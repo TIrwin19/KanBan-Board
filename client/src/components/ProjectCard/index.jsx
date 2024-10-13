@@ -6,7 +6,6 @@ import { useAuth } from "../../contexts/AuthContext";
 
 const ProjectCard = () => {
   const { user } = useAuth();
-  console.log(user.id);
   const { loading, error, data } = useQuery(GET_ADMIN_PROJECT, {
     variables: { adminId: user.id },
     pollInterval: 500,
@@ -14,7 +13,7 @@ const ProjectCard = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) {
-    console.error("error fetching projects:", error);
+    console.error("Error fetching projects:", error);
     return <p>Error fetching projects.</p>;
   }
   const cards = data.getAdminProject;

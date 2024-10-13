@@ -25,7 +25,11 @@ const userSchema = new Schema({
         type: String,
         required: true,
         minLength: [6, 'Your password must be at least 6 characters in length']
-    }
+    },
+
+    avatar: {
+        type: String,
+    },
 })
 
 // userSchema.methods.toJSON = function () {

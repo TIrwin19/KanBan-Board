@@ -34,7 +34,6 @@ const Dashboard = () => {
           {isDiv6Expanded && <div className="pt-10">6</div>}
         </div>
 
-        {/* Expand/Collapse Button */}
         <button
           onClick={toggleDiv6}
           className={`absolute top-4 ${
@@ -50,16 +49,16 @@ const Dashboard = () => {
             isDiv6Expanded ? "col-span-4 col-start-1" : "col-span-3 col-start-2"
           } row-span-2 row-start-1 the-shadow border-2 text-[#363636] rounded-xl p-4 transition-all duration-500`}
         >
-          <div className="inner-grid grid grid-cols-2 grid-rows-2  gap-2 h-full">
-            <div className="box1  p-2 col-start-1 col-end-3 row-start-5 row-end-2">
-              {" "}
-              <Welcome />{" "}
+          <div className="inner-grid grid grid-cols-3 grid-rows-3 gap-2 h-full">
+            <div className="box1 col-start-1 col-end-5 row-start-1 row-end-3">
+              <Welcome />
             </div>
-            <div className="box2  p-2 col-start-4 col-end-4 row-start-5 row-end-5">
-              {" "}
-              <Welcome2 />{" "}
+
+            <div className="box2 p-2 col-start-4 col-end-4 row-end-3">
+              <Welcome2 />
             </div>
-            <div className="box3  p-2 col-start-1 col-end-3 row-start-6 row-end-5">
+
+            <div className="box3 col-start-1 row-end-4">
               <Welcome3 />
             </div>
           </div>
@@ -74,7 +73,9 @@ const Dashboard = () => {
             isDiv6Expanded ? "col-span-4 col-start-1" : "col-span-3 col-start-2"
           } row-span-2 row-start-3 the-shadow border-2 text-[#363636] rounded-xl p-4 transition-all duration-500`}
         >
-          <span className="text-2xl font-bold">Your Projects</span>
+          <span className="text-xl text-gray-800 dark:text-gray-400">
+            Your Projects
+          </span>
           <div className="flex flex-col gap-2 h-full pt-2">
             <div className="item1 flex-2">
               {" "}
@@ -84,7 +85,6 @@ const Dashboard = () => {
         </div>
 
         <div className="div5 row-span-3 col-start-5 row-start-1 the-shadow border-2 text-[#363636] rounded-xl p-4">
-          User avatar, active projects, completed projects, more stuff later on
           <User />
         </div>
       </div>

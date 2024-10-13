@@ -38,3 +38,10 @@ export const REFRESH_ACCESS_TOKEN = gql`
     }
   }
 `;
+
+export const SET_AVATAR = gql`
+  mutation setAvatar($userId: ID!, $avatar: String!) {
+    setAvatar(userId: $userId, avatar: $avatar)
+  }
+`;
+
