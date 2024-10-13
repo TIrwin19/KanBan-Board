@@ -6,7 +6,8 @@ const typeDefs = gql`
   type User {
     id: ID!
     username: String!
-    email: String
+    email: String!
+    avatar: String
   }
 
   type AuthPayload {
@@ -47,6 +48,7 @@ const typeDefs = gql`
   type Query {
     getUser: User!
     getAdminProject(adminId: ID!): [Project!]!
+    getUserAvatar(userId: ID!): User!
   }
 
   type Mutation {
@@ -77,6 +79,8 @@ const typeDefs = gql`
     login(username: String!, password: String!): AuthPayload!
     refreshAccessToken(refreshToken: String!): AccessTokenPayload!
     logout: Boolean!
+
+    setAvatar(userId: ID!, avatar: String!): Boolean
   }
 `;
 

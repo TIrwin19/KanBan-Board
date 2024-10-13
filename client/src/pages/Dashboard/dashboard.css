@@ -6,3 +6,42 @@
 .button-color {
   background-color: #8a897c;
 }
+
+
+/* Adjusting inner-grid for responsiveness */
+.inner-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0rem;
+  /* Ensure enough spacing between grid items */
+  height: 100%;
+}
+
+/* Ensure that box1 takes full height/width and centers its content */
+.box1 {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  text-align: start;
+  overflow: hidden;
+  /* Prevent overflow of content */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .inner-grid {
+    grid-template-columns: 1fr;
+    /* Stack columns vertically on smaller screens */
+    grid-template-rows: auto;
+    /* Let rows adjust automatically */
+  }
+
+  .box1,
+  .box2,
+  .box3 {
+    padding: 1rem;
+    max-width: 100%;
+    /* Ensure grid items don't exceed viewport width */
+  }
+}
