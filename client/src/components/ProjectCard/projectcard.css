@@ -1,0 +1,46 @@
+/* projectcard.css */
+
+.relative {
+  position: relative;
+}
+
+.scrollable-container {
+  overflow: hidden; /* Hide default scrollbars */
+  position: relative; /* Allow absolute positioning for hover areas */
+}
+
+.scrollable {
+  display: flex;
+  overflow-x: auto; /* Allow horizontal scrolling */
+  white-space: nowrap; /* Prevent wrapping of children */
+  transition: transform 0.3s ease-in-out; /* Optional: smooth scrolling */
+}
+
+/* Hide scrollbars for WebKit browsers (Chrome, Safari, Opera) */
+.scrollable::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar completely */
+}
+
+/* Hide scrollbars for Firefox */
+.scrollable {
+  scrollbar-width: none; /* Hides scrollbar in Firefox */
+}
+
+/* Add styles for left and right scroll areas */
+.scroll-area {
+  position: absolute;
+  top: 33%; /* Center the scroll area vertically */
+  width: 50px; /* Adjust this to change the size of the scroll area */
+  height: 30%; /* Adjust height as needed */
+  background: rgba(255, 255, 255, 0); /* Semi-transparent background */
+  z-index: 10; /* Ensure it sits above other content */
+  cursor: pointer; /* Change cursor to pointer */
+}
+
+.left-scroll {
+  left: 0; /* Position to the left */
+}
+
+.right-scroll {
+  right: 0; /* Position to the right */
+}

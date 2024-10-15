@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_USER_AVATAR } from "../../graphql/queries/authQuerie";
-import { useNavigate } from "react-router-dom";
-import { LOGOUT } from "../../graphql/mutations/authMutations"; 
+import { useNavigate, NavLink } from "react-router-dom";
+import { LOGOUT } from "../../graphql/mutations/authMutations";
 import { SET_AVATAR } from "../../graphql/mutations/authMutations"; // Import the SET_AVATAR mutation
 import { useAuth } from "../../contexts/AuthContext";
 import { useMutation } from "@apollo/client";
 import {
+  ChartBarIcon,
   ChevronRightIcon,
   ClipboardListIcon,
   CheckCircleIcon,
@@ -17,28 +18,36 @@ export default function User() {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const [logoutMutation] = useMutation(LOGOUT);
-  const [setAvatarMutation] = useMutation(SET_AVATAR); 
+  const [setAvatarMutation] = useMutation(SET_AVATAR);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState("");
-  
-  const {loading, error, data} = useQuery(GET_USER_AVATAR, {
-    variables: {userId: user.id},
+  const [avatarUrl, setAvatarUrl] = useState(
+    user?.username
+      ? `https://avatar.iran.liara.run/username?username=${user.username}+`
+      : ""
+  );
+
+  const { loading, error, data } = useQuery(GET_USER_AVATAR, {
+    variables: { userId: user.id },
     pollInterval: 1000,
   });
-  
+  // console.log(data);
+
+  useEffect(() => {
+    if (data) {
+      // console.log("Data received from GraphQL:", data); // Log the entire data object
+      const avatar = data.getUserAvatar;
+      if (avatar) {
+        // console.log("Setting avatar URL to:", avatar); // Log the avatar being set
+        setAvatarUrl(avatar);
+      }
+    }
+  }, [data]);
+
   if (loading) return <p>Loading...</p>;
   if (error) {
     console.error("Error fetching avatar:", error);
     return <p>Error fetching avatar.</p>;
-  } 
-
-  useEffect(() => {
-    if (data?.getUserAvatar) {
-      setAvatarUrl(data.getUserAvatar);
-    } else {
-      setAvatarUrl(`https://avatar.iran.liara.run/username?username=${user.username}+`);
-    }
-  }, [data, user.username]); 
+  }
 
   const handleLogout = async () => {
     logout();
@@ -48,17 +57,17 @@ export default function User() {
 
   const selectAvatar = async (avatar) => {
     const newAvatarUrl = `https://avatar.iran.liara.run/public/${avatar}`;
-    setAvatarUrl(newAvatarUrl);
-    
     // Call the setAvatar mutation to save the avatar in the backend
     try {
       // Call the setAvatar mutation to save the avatar in the backend
-      await setAvatarMutation({ variables: { userId: user.id, avatar: newAvatarUrl } });
+      await setAvatarMutation({
+        variables: { userId: user.id, avatar: newAvatarUrl },
+      });
     } catch (error) {
       console.error("Error updating avatar:", error);
       // Optionally show an error message to the user
     }
-    
+
     toggleModal();
   };
 
@@ -154,26 +163,34 @@ export default function User() {
           )}
 
           <div className="mt-4 flex flex-col gap-3">
-            <a
-              href="/active-projects"
-              className="flex items-center gap-2 p-2 text-gray-800 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-200"
+            <NavLink
+              to={`/projectlist/`}
+              className="flex items-center gap-2 p-2 transition-all duration-200 text-gray-700 hover:text-black hover:font-bold"
+            >
+              <ChartBarIcon className="h-5 w-5" />
+              Project List
+              <ChevronRightIcon className="h-5 w-5 ml-auto" />
+            </NavLink>
+            <NavLink
+              to={`/active-projects/${user.id}`}
+              className="flex items-center gap-2 p-2 transition-all duration-200 text-gray-700 hover:text-black hover:font-bold"
             >
               <ClipboardListIcon className="h-5 w-5" />
               Active Projects
               <ChevronRightIcon className="h-5 w-5 ml-auto" />
-            </a>
-            <a
-              href="/completed-projects"
-              className="flex items-center gap-2 p-2 text-gray-800 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-200"
+            </NavLink>
+            <NavLink
+              to={`/completed-projects/${user.id}`}
+              className="flex items-center gap-2 p-2 transition-all duration-200 text-gray-700 hover:text-black hover:font-bold"
             >
               <CheckCircleIcon className="h-5 w-5" />
               Completed Projects
               <ChevronRightIcon className="h-5 w-5 ml-auto" />
-            </a>
+            </NavLink>
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 p-2 text-gray-800 dark:text-gray-400 hover:text-black dark:hover:text-white transition-all duration-200"
+              className="flex items-center gap-2 p-2 transition-all duration-200 text-gray-700 hover:text-black hover:font-bold"
             >
               <LogoutIcon className="h-5 w-5" />
               Logout

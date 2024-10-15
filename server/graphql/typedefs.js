@@ -48,7 +48,7 @@ const typeDefs = gql`
   type Query {
     getUser: User!
     getAdminProject(adminId: ID!): [Project!]!
-    getUserAvatar(userId: ID!): User!
+    getUserAvatar(userId: ID!): String!
   }
 
   type Mutation {

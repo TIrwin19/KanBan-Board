@@ -12,8 +12,6 @@ export const GET_USER = gql`
 
 export const GET_USER_AVATAR = gql`
   query GetUserAvatar($userId: ID!) {
-  getUserAvatar(userId: $userId) {
-    avatar
-  }}
+    getUserAvatar(userId: $userId)
+  }
 `;
-
