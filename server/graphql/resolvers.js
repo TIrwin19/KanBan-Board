@@ -16,6 +16,12 @@ const {
 
 // Generate Access Token
 
+function validateEmail(value) {
+  const exp = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g)
+
+  return exp.test(value)
+}
+
 const resolvers = {
   Query: {
     // Auth resolver
@@ -36,7 +42,7 @@ const resolvers = {
       }
     },
 
-    // Get Project
+    // Get Admin Projects
     getAdminProject: async (_, { adminId }) => {
       if (!adminId) throw new Error("No admin provided.");
 
@@ -45,6 +51,17 @@ const resolvers = {
       }).populate("admin");
 
       return currentAdminProjects;
+    },
+
+    //Get Joined Projects
+    getJoinedProject: async (_, { userId }) => {
+      if (!userId) throw new Error("No userId provided.")
+
+      const joinedProjects = await Project.find({
+        members: userId,
+      }).populate("members")
+
+      return joinedProjects
     },
 
     //Get User Avatar
@@ -89,6 +106,34 @@ const resolvers = {
       } catch (err) {
         throw new Error("Failed to create project: " + err.message);
       }
+    },
+
+    addMembers: async (_, { projectId, adminId, userEmail }) => {
+      //If no admin id is present don't procede
+      if (!adminId) throw new Error("Admin ID not provided.")
+
+      //Find Project by ID
+      const project = await Project.findById(projectId)
+      if (!project) throw new Error("Project does not exist.")
+
+      //Validate Email
+      const email = validateEmail(userEmail)
+      if (!email) throw new Error("Invalid email entered.")
+
+      //Find user by email
+      const member = await User.findOne({ email: userEmail })
+      if (!member) throw new Error("No one by that email exists.")
+
+      //Check if user is already a member
+      if (project.members.includes(member._id)) {
+        throw new Error("User is already a member of the project.");
+      }
+
+      //Add the member to the project
+      project.members.push(member._id)
+      await project.save()//Save the updated project
+
+      return `${userEmail} has been added to ${project.title}`
     },
 
     createColumn: async (_, { projectId, title, order }) => {

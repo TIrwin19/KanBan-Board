@@ -1,26 +1,34 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDrag, useDrop } from "react-dnd";
+import Task from "../Task/index.jsx";
 
-import Task from "../Task";
+const Column = ({ column, tasks, moveTask }) => {
+  const [, drop] = useDrop({
+    accept: "task",
+    drop: (item) => {
+      // If dropped into a different column, move the task
+      if (item.columnId !== column.id) {
+        moveTask(item.index, tasks.length, column.id); // Move to end of column
+        item.columnId = column.id; // Update column id for the dragged item
+      }
+    },
+  });
 
-// const GlobalStyle = styled.div`
-//   @import "~react-beautiful-dnd/styles.css";
-// `;
-
-const Column = ({ id, name, items, onDragEnd }) => {
   return (
-    <div className="bg-gray-100 rounded-lg p-4 min-h-[300px]" draggable="false">
-      <h2 className="font-bold mb-4">{name}</h2>
-      <div className="space-y-2">
-        {items.map((item, index) => (
-          <Task
-            key={index}
-            item={item}
-            index={index}
-            draggableId={item}
-            onDragEnd={onDragEnd}
-          />
-        ))}
-      </div>
+    <div
+      ref={drop}
+      className="bg-gray-100 p-4 rounded-lg min-h-[300px] flex flex-col"
+    >
+      <h2 className="font-bold mb-2">{column.title}</h2>
+      {tasks.map((task, index) => (
+        <Task
+          key={task.id}
+          task={task}
+          index={index}
+          columnId={column.id}
+          moveTask={moveTask}
+        />
+      ))}
     </div>
   );
 };

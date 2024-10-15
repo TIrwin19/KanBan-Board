@@ -1,77 +1,111 @@
 import React, { useState } from "react";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import Column from "./index.jsx";
 import TaskModal from "../Task/TaskModal.jsx";
 
-const initialColumns = [
-  { id: "todo", name: "To Do", items: [] },
-  { id: "inProgress", name: "In Progress", items: [] },
-  { id: "done", name: "Done", items: [] },
-];
+const initialData = {
+  columns: {
+    1: { id: "1", title: "To Do", taskIds: ["1", "2"] },
+    2: { id: "2", title: "In Progress", taskIds: [] },
+    3: { id: "3", title: "Done", taskIds: ["3"] },
+  },
+  tasks: {
+    1: { id: "1", content: "Task 1" },
+    2: { id: "2", content: "Task 2" },
+    3: { id: "3", content: "Task 3" },
+  },
+};
 
 const Board = () => {
-  const [columns, setColumns] = useState(initialColumns);
-  const [showModal, setShowModal] = useState(false);
+  const [data, setData] = useState(initialData);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const addItemToList = (listId, newItem) => {
-    setColumns((prevColumns) =>
-      prevColumns.map((column) =>
-        column.id === listId
-          ? { ...column, items: [...column.items, newItem] }
-          : column
-      )
-    );
+  const moveTask = (taskId, sourceColumnId, targetColumnId, targetIndex) => {
+    // If moving within the same column and targetIndex is not provided, do nothing
+    if (sourceColumnId === targetColumnId && targetIndex === null) return;
+
+    // Get the source and target columns
+    const sourceColumn = data.columns[sourceColumnId];
+    const targetColumn = data.columns[targetColumnId];
+
+    // Remove the task from the source column
+    const updatedSourceTaskIds = [...sourceColumn.taskIds];
+    const taskIndexInSource = updatedSourceTaskIds.indexOf(taskId);
+    if (taskIndexInSource > -1) {
+      updatedSourceTaskIds.splice(taskIndexInSource, 1);
+    }
+
+    // Insert the task in the target column at the specified index or at the end
+    const updatedTargetTaskIds = [...targetColumn.taskIds];
+    if (targetIndex !== null) {
+      updatedTargetTaskIds.splice(targetIndex, 0, taskId);
+    } else {
+      updatedTargetTaskIds.push(taskId);
+    }
+
+    // Update state with the new columns
+    setData((prevData) => ({
+      ...prevData,
+      columns: {
+        ...prevData.columns,
+        [sourceColumnId]: { ...sourceColumn, taskIds: updatedSourceTaskIds },
+        [targetColumnId]: { ...targetColumn, taskIds: updatedTargetTaskIds },
+      },
+    }));
   };
 
-  const handleDragEnd = ({ destination, source }) => {
-    if (!destination) return;
+  const addTask = (taskName, dueDate) => {
+    const newTaskId = `${Date.now()}`;
+    const newTask = {
+      id: newTaskId,
+      content: `${taskName} (Due: ${dueDate})`,
+    };
 
-    const newColumns = Array.from(columns);
-    const [reorderedItem] = newColumns[source.droppableId].items.splice(
-      source.index,
-      1
-    );
-    newColumns[destination.droppableId].items.splice(
-      destination.index,
-      0,
-      reorderedItem
-    );
+    const newColumn = {
+      ...data.columns["1"],
+      taskIds: [...data.columns["1"].taskIds, newTaskId],
+    };
 
-    setColumns(newColumns);
+    setData((prevData) => ({
+      ...prevData,
+      tasks: {
+        ...prevData.tasks,
+        [newTaskId]: newTask,
+      },
+      columns: {
+        ...prevData.columns,
+        ["1"]: newColumn,
+      },
+    }));
   };
-
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Kanban Board</h1>
+    <DndProvider backend={HTML5Backend}>
       <button
-        onClick={openModal}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-8"
+        onClick={() => setIsModalOpen(true)}
+        className="bg-blue-500 text-white p-2 rounded mb-4"
       >
         Add Task
       </button>
 
       <TaskModal
-        isOpen={showModal}
-        onClose={closeModal}
-        addItemToList={addItemToList}
-        columns={columns}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddTask={addTask}
       />
 
-      <div className="grid grid-cols-3 gap-4">
-        {columns.map((column) => (
+      <div className="grid grid-cols-3 gap-4 p-4">
+        {Object.values(data.columns).map((column) => (
           <Column
             key={column.id}
-            id={column.id}
-            name={column.name}
-            items={column.items}
-            onDragEnd={handleDragEnd}
+            column={column}
+            tasks={column.taskIds.map((taskId) => data.tasks[taskId])}
+            moveTask={moveTask}
           />
         ))}
       </div>
-    </div>
+    </DndProvider>
   );
 };
-
 export default Board;

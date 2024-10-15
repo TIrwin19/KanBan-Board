@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-import Board from "../../components/Column/Board";
+import Board from "../../components/Column/Board.jsx";
+import AddMembers from "../../components/AddMembers/index.jsx";
 
 const Project = () => {
   const [state, setState] = useState();
@@ -15,6 +16,7 @@ const Project = () => {
 
   return (
     <>
+      <AddMembers />
       <Board />
     </>
   );

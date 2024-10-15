@@ -1,22 +1,22 @@
 import React, { useRef, useState } from "react";
-import "./projectcard.css";
+import "./joinedProjectCard.css";
 import { useQuery } from "@apollo/client";
-import { GET_ADMIN_PROJECT } from "./../../graphql/queries/projectQueries";
+import { GET_JOINED_PROJECT } from "./../../graphql/queries/projectQueries";
 import { useAuth } from "../../contexts/AuthContext";
 import { NavLink } from "react-router-dom";
 import { useStore } from "../../contexts/ProjectContext";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
 
-const ProjectCard = () => {
+const JoinedProjectCard = () => {
   const { user } = useAuth();
   const { setProjectId } = useStore();
 
-  const { loading, error, data } = useQuery(GET_ADMIN_PROJECT, {
-    variables: { adminId: user.id },
+  const { loading, error, data } = useQuery(GET_JOINED_PROJECT, {
+    variables: { userId: user.id },
     pollInterval: 1000,
   });
 
-  const cards = data?.getAdminProject || [];
+  const cards = data?.getJoinedProject || [];
   const scrollRef = useRef(null);
   const [scrollInterval, setScrollInterval] = useState(null);
 
@@ -114,4 +114,4 @@ const ProjectCard = () => {
   );
 };
 
-export default ProjectCard;
+export default JoinedProjectCard;
