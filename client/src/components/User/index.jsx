@@ -109,13 +109,13 @@ export default function User() {
         <>
           <div className="flex items-center gap-6">
             <button
-              className="w-20 h-20 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500"
+              className="w-20 h-20 p-1 rounded-full ring-2 ring-gray-500"
               type="button"
               onClick={toggleModal}
             >
               <img src={avatarUrl} alt="User Avatar" />
             </button>
-            <div className="font-medium dark:text-white">
+            <div className="font-medium text-gray-500">
               {capitalizeFirstLetter(user.username)}
             </div>
           </div>

@@ -48,12 +48,14 @@ const typeDefs = gql`
   type Query {
     getUser: User!
     getAdminProject(adminId: ID!): [Project!]!
+    getJoinedProject(userId: ID!): [Project!]!
     getUserAvatar(userId: ID!): String!
   }
 
   type Mutation {
     createProject(title: String!, admin: ID!): Project!
     deleteProject(projectId: ID!): Boolean!
+    addMembers(projectId: ID!, adminId: ID!, userEmail: String!): String!
 
     createColumn(projectId: ID!, title: String!, order: Int!): Column!
     deleteColumn(projectId: ID!, columnId: ID!): Boolean!

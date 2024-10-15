@@ -11,6 +11,7 @@ import Calendar from "../../components/Calendar";
 import OngoingProjects from "../../components/Ongoing";
 import "./dashboard.css";
 import User from "../../components/User";
+import JoinedProjectCard from "../../components/JoinedProjectCard";
 
 //functionalites join, create, leave, logout , invite
 // we import them here import JOIN_GAME
@@ -91,7 +92,9 @@ const Dashboard = () => {
             Joined Projects
           </span>
           <div className="flex flex-col gap-2 h-full pt-2">
-            <div className="item1 flex-2"> </div>
+            <div className="item1 flex-2">
+              <JoinedProjectCard />
+            </div>
           </div>
         </div>
 

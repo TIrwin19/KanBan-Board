@@ -38,7 +38,7 @@ const taskSchema = new Schema({
   },
 
 }, {
-  timestamp: true
+  timestamps: true
 })
 
 const columnSchema = new Schema({
@@ -72,6 +72,8 @@ const projectSchema = new Schema({
   }],
 
   columns: [columnSchema], //Nested columns within a project
+}, {
+  timestamps: true
 })
 
 const Project = model('Project', projectSchema)
