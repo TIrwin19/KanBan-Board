@@ -73,14 +73,25 @@ const Dashboard = () => {
             isDiv6Expanded ? "col-span-4 col-start-1" : "col-span-3 col-start-2"
           } row-span-2 row-start-3 the-shadow border-2 text-[#363636] rounded-xl p-4 transition-all duration-500`}
         >
-          <span className="text-xl text-gray-800 dark:text-gray-400">
-            Your Projects
-          </span>
+          <span className="text-xl text-gray-800 font-bold">Your Projects</span>
           <div className="flex flex-col gap-2 h-full pt-2">
             <div className="item1 flex-2">
               {" "}
               <ProjectCard />
             </div>
+          </div>
+        </div>
+
+        <div
+          className={`div4 ${
+            isDiv6Expanded ? "col-span-4 col-start-1" : "col-span-3 col-start-2"
+          } row-span-2 row-start-5 the-shadow border-2 text-[#363636] rounded-xl p-4 transition-all duration-500`}
+        >
+          <span className="text-xl text-gray-800 font-bold">
+            Joined Projects
+          </span>
+          <div className="flex flex-col gap-2 h-full pt-2">
+            <div className="item1 flex-2"> </div>
           </div>
         </div>
 

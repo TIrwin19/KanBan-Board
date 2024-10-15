@@ -49,11 +49,14 @@ const resolvers = {
 
     //Get User Avatar
     getUserAvatar: async (_, { userId }) => {
+
       if (!userId) throw new Error("No user provided.");
       const user = await User.findById(userId);
-      const avatar = user.avatar;
-      // console.log(avatar)
-      return avatar;
+      if (!user) throw new Error("User not found."); // Check if user exists
+      const avatar = user.avatar || `https://avatar.iran.liara.run/username?username=${user.username}+`;
+      // console.log("User found:", user); // Log user data
+      // console.log("User Avatar from DB:", avatar);
+      return avatar
     },
   },
 
@@ -267,11 +270,11 @@ const resolvers = {
     },
 
     setAvatar: async (_, { userId, avatar }) => {
-      console.log("setAvatar mutation runs in backend");
+      // console.log("setAvatar mutation runs in backend");
       const user = await User.findById(userId);
       if (!user) throw new Error("User not found");
 
-      user.avatar = avatar; // Update the avatar
+      user.avatar = avatar// Update the avatar
       await user.save(); // Save the user
 
       return true; // Return the updated user

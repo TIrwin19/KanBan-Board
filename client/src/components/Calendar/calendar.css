@@ -16,7 +16,7 @@
   margin: -0.5em;
 }
 
-.react-calendar--doubleView .react-calendar__viewContainer>* {
+.react-calendar--doubleView .react-calendar__viewContainer > * {
   width: 50%;
   margin: 0.5em;
 }
@@ -69,10 +69,8 @@
 }
 
 .react-calendar__month-view__weekdays__weekday {
-  padding: 0.5em;
+  padding: 0.25em;
   text-decoration: underline;
-  text-decoration: white;
-  
 }
 
 .react-calendar__month-view__weekNumbers .react-calendar__tile {
@@ -84,9 +82,9 @@
   font-weight: bold;
 }
 
-.react-calendar__month-view__days__day--weekend {
+/* .react-calendar__month-view__days__day--weekend {
   color: #d10000;
-}
+} */
 
 .react-calendar__month-view__days__day--neighboringMonth,
 .react-calendar__decade-view__years__year--neighboringDecade,

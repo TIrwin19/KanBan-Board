@@ -1,27 +1,68 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "./projectcard.css";
 import { useQuery } from "@apollo/client";
 import { GET_ADMIN_PROJECT } from "./../../graphql/queries/projectQueries";
 import { useAuth } from "../../contexts/AuthContext";
+import { NavLink } from "react-router-dom";
+import { useStore } from "../../contexts/ProjectContext";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
 
 const ProjectCard = () => {
   const { user } = useAuth();
+  const { setProjectId } = useStore();
+
   const { loading, error, data } = useQuery(GET_ADMIN_PROJECT, {
     variables: { adminId: user.id },
-    pollInterval: 500,
+    pollInterval: 1000,
   });
+
+  const cards = data?.getAdminProject || [];
+  const scrollRef = useRef(null);
+  const [scrollInterval, setScrollInterval] = useState(null);
 
   if (loading) return <p>Loading...</p>;
   if (error) {
     console.error("Error fetching projects:", error);
     return <p>Error fetching projects.</p>;
   }
-  const cards = data.getAdminProject;
-  console.log(cards);
+
+  const handleViewProject = async (projectId) => {
+    await setProjectId(projectId);
+  };
+
+  const startScrolling = (direction) => {
+    const scrollAmount = 2; // Increase this value to scroll faster
+    const scrollInterval = 5; // Decrease this value for more frequent scroll updates
+
+    const intervalId = setInterval(() => {
+      scrollRef.current.scrollBy({
+        left: direction === "right" ? scrollAmount : -scrollAmount,
+        behavior: "auto",
+      });
+    }, scrollInterval); // Roughly 60 frames per second
+
+    setScrollInterval(intervalId);
+  };
+
+  const stopScrolling = () => {
+    clearInterval(scrollInterval);
+    setScrollInterval(null);
+  };
 
   return (
-    <div className="relative overflow-x-scroll scrollbar-hide">
-      <div className="flex space-x-4">
+    <div className="relative overflow-x-hidden scrollable-container">
+      <div
+        className="scroll-area left-scroll"
+        onMouseEnter={() => startScrolling("left")}
+        onMouseLeave={stopScrolling}
+      >
+        <ChevronLeftIcon className="text-white" />
+      </div>
+      <div
+        className="scrollable space-x-4"
+        ref={scrollRef}
+        style={{ overflowX: "auto", whiteSpace: "nowrap" }}
+      >
         {cards.map((card, index) => (
           <div
             key={index}
@@ -37,8 +78,9 @@ const ProjectCard = () => {
             {/* <p className="text-sm text-gray-600 dark:text-gray-300">
               Members: {card.members}
             </p> */}
-            <a
-              href="#"
+            <NavLink
+              to={`/project/${card.id}`}
+              onClick={() => handleViewProject(card.id)}
               className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Link to project
@@ -51,15 +93,22 @@ const ProjectCard = () => {
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M1 5h12m0 0L9 1m4 4L9 9"
                 />
               </svg>
-            </a>
+            </NavLink>
           </div>
         ))}
+      </div>
+      <div
+        className="scroll-area right-scroll"
+        onMouseEnter={() => startScrolling("right")}
+        onMouseLeave={stopScrolling}
+      >
+        <ChevronRightIcon className="text-white" />
       </div>
     </div>
   );
