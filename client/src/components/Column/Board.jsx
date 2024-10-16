@@ -22,21 +22,29 @@ const Board = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const moveTask = (taskId, sourceColumnId, targetColumnId, targetIndex) => {
-    // If moving within the same column and targetIndex is not provided, do nothing
-    if (sourceColumnId === targetColumnId && targetIndex === null) return;
+    if (!sourceColumnId || !targetColumnId) {
+      console.error("Column ID missing!");
+      return;
+    }
 
-    // Get the source and target columns
     const sourceColumn = data.columns[sourceColumnId];
     const targetColumn = data.columns[targetColumnId];
 
-    // Remove the task from the source column
+    // Check if columns are defined
+    if (!sourceColumn || !targetColumn) {
+      console.error("Source or target column is undefined");
+      return;
+    }
+
     const updatedSourceTaskIds = [...sourceColumn.taskIds];
     const taskIndexInSource = updatedSourceTaskIds.indexOf(taskId);
     if (taskIndexInSource > -1) {
       updatedSourceTaskIds.splice(taskIndexInSource, 1);
+      if (sourceColumnId === targetColumnId && targetIndex !== null) {
+        updatedSourceTaskIds.splice(targetIndex, 0, taskId); // Reordering within the same column
+      }
     }
 
-    // Insert the task in the target column at the specified index or at the end
     const updatedTargetTaskIds = [...targetColumn.taskIds];
     if (targetIndex !== null) {
       updatedTargetTaskIds.splice(targetIndex, 0, taskId);
@@ -44,7 +52,6 @@ const Board = () => {
       updatedTargetTaskIds.push(taskId);
     }
 
-    // Update state with the new columns
     setData((prevData) => ({
       ...prevData,
       columns: {
@@ -59,7 +66,8 @@ const Board = () => {
     const newTaskId = `${Date.now()}`;
     const newTask = {
       id: newTaskId,
-      content: `${taskName} (Due: ${dueDate})`,
+      title: taskName, // Use separate properties for title and due date
+      dueDate: dueDate,
     };
 
     const newColumn = {
