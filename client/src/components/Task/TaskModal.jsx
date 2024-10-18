@@ -5,71 +5,79 @@ import { v4 as uuidv4 } from 'uuid';
 const TaskModal = ({ addTask, columns, isOpen, setIsOpen }) => {
   const [title, setTitle] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [selectedColumn, setSelectedColumn] = useState(columns[0]?.id || "");
+  const [selectedColumnId, setSelectedColumnId] = useState(columns[0]?.id || "");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (title && dueDate && selectedColumn) {
-      addTask(title, dueDate, selectedColumn);
-      setTitle("");
-      setDueDate("");
-      setSelectedColumn(columns[0]?.id || "");
-      setIsOpen(false);
-    }
+    if (!title || !dueDate || !selectedColumnId) return;
+
+    const newTask = {
+      id: `task-${Date.now()}`,
+      title,
+      dueDate,
+    };
+
+    addTask(newTask, selectedColumnId);
+    setIsOpen(false);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-4 rounded shadow-lg w-96">
-        <h2 className="text-lg font-bold mb-4">Add Task</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700">Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full p-2 border rounded"
-              required
-            />
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Title:
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </label>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Due Date</label>
-            <input
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              className="w-full p-2 border rounded"
-              required
-            />
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Due Date:
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </label>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Column</label>
-            <select
-              value={selectedColumn}
-              onChange={(e) => setSelectedColumn(e.target.value)}
-              className="w-full p-2 border rounded"
-              required
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Column:
+              <select
+                value={selectedColumnId}
+                onChange={(e) => setSelectedColumnId(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              >
+                {columns.map((column) => (
+                  <option key={column.id} value={column.id}>
+                    {column.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className="flex items-center justify-between">
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              {columns.map((column) => (
-                <option key={column.id} value={column.id}>
-                  {column.title}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex justify-end">
+              Add Task
+            </button>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="bg-gray-500 text-white p-2 rounded mr-2"
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Cancel
-            </button>
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-              Add Task
             </button>
           </div>
         </form>

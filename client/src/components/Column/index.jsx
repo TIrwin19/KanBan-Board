@@ -8,7 +8,7 @@ const Column = ({ columnId, title, tasks = [] }) => {
     <Droppable id={columnId}>
       <div className="bg-gray-100 w-80 p-4 rounded-lg shadow-lg">
         <h2 className="text-lg font-bold mb-4 text-gray-800">{title}</h2>
-        <div className="space-y-4">
+        <div className="space-y-2">
           {tasks.map((task, index) => (
             <Task key={task.id} task={task} index={index} columnId={columnId} />
           ))}
