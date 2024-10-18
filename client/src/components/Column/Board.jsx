@@ -1,119 +1,107 @@
 import React, { useState } from "react";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndContext, closestCenter, closestCorners } from "@dnd-kit/core";
+import { arrayMove, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import Column from "./index.jsx";
 import TaskModal from "../Task/TaskModal.jsx";
-
-const initialData = {
-  columns: {
-    1: { id: "1", title: "To Do", taskIds: ["1", "2"] },
-    2: { id: "2", title: "In Progress", taskIds: [] },
-    3: { id: "3", title: "Done", taskIds: ["3"] },
-  },
-  tasks: {
-    1: { id: "1", content: "Task 1" },
-    2: { id: "2", content: "Task 2" },
-    3: { id: "3", content: "Task 3" },
-  },
-};
+import Droppable from "../Drop-Drag/Droppable.jsx";
 
 const Board = () => {
-  const [data, setData] = useState(initialData);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [columns, setColumns] = useState({
+    column1: { title: "To Do", tasks: [{ id: "task1", title: "Task 1", dueDate: "2023-10-01" }] },
+    column2: { title: "In Progress", tasks: [] },
+    column3: { title: "Done", tasks: [] },
+  });
+  const [isModalOpen, setModalOpen] = useState(false);
 
-  const moveTask = (taskId, sourceColumnId, targetColumnId, targetIndex) => {
-    if (!sourceColumnId || !targetColumnId) {
-      console.error("Column ID missing!");
-      return;
-    }
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
-    const sourceColumn = data.columns[sourceColumnId];
-    const targetColumn = data.columns[targetColumnId];
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (!over) return;
 
-    // Check if columns are defined
-    if (!sourceColumn || !targetColumn) {
-      console.error("Source or target column is undefined");
-      return;
-    }
+    const { id: activeId } = active;
+    const { id: overId } = over;
 
-    const updatedSourceTaskIds = [...sourceColumn.taskIds];
-    const taskIndexInSource = updatedSourceTaskIds.indexOf(taskId);
-    if (taskIndexInSource > -1) {
-      updatedSourceTaskIds.splice(taskIndexInSource, 1);
-      if (sourceColumnId === targetColumnId && targetIndex !== null) {
-        updatedSourceTaskIds.splice(targetIndex, 0, taskId); // Reordering within the same column
+    if (activeId !== overId) {
+      let activeColumnId, overColumnId;
+      let activeIndex, overIndex;
+
+      Object.keys(columns).forEach((columnId) => {
+        const activeTaskIndex = columns[columnId].tasks.findIndex((task) => task.id === activeId);
+        if (activeTaskIndex !== -1) {
+          activeColumnId = columnId;
+          activeIndex = activeTaskIndex;
+        }
+
+        const overTaskIndex = columns[columnId].tasks.findIndex((task) => task.id === overId);
+        if (overTaskIndex !== -1) {
+          overColumnId = columnId;
+          overIndex = overTaskIndex;
+        }
+      });
+
+      if (activeColumnId && overColumnId) {
+        setColumns((prevColumns) => {
+          const newColumns = { ...prevColumns };
+          const [movedTask] = newColumns[activeColumnId].tasks.splice(activeIndex, 1);
+          newColumns[overColumnId].tasks.splice(overIndex, 0, movedTask);
+          return newColumns;
+        });
+      } else if (activeColumnId && !overColumnId) {
+        setColumns((prevColumns) => {
+          const newColumns = { ...prevColumns };
+          const [movedTask] = newColumns[activeColumnId].tasks.splice(activeIndex, 1);
+          newColumns[overId].tasks.push(movedTask);
+          return newColumns;
+        });
       }
     }
-
-    const updatedTargetTaskIds = [...targetColumn.taskIds];
-    if (targetIndex !== null) {
-      updatedTargetTaskIds.splice(targetIndex, 0, taskId);
-    } else {
-      updatedTargetTaskIds.push(taskId);
-    }
-
-    setData((prevData) => ({
-      ...prevData,
-      columns: {
-        ...prevData.columns,
-        [sourceColumnId]: { ...sourceColumn, taskIds: updatedSourceTaskIds },
-        [targetColumnId]: { ...targetColumn, taskIds: updatedTargetTaskIds },
-      },
-    }));
   };
 
-  const addTask = (taskName, dueDate) => {
-    const newTaskId = `${Date.now()}`;
-    const newTask = {
-      id: newTaskId,
-      title: taskName, // Use separate properties for title and due date
-      dueDate: dueDate,
-    };
+  const addTask = (newTask, columnId) => {
+    if (!columns[columnId]) {
+      console.error(`Column with id ${columnId} does not exist.`);
+      return;
+    }
 
-    const newColumn = {
-      ...data.columns["1"],
-      taskIds: [...data.columns["1"].taskIds, newTaskId],
-    };
-
-    setData((prevData) => ({
-      ...prevData,
-      tasks: {
-        ...prevData.tasks,
-        [newTaskId]: newTask,
-      },
-      columns: {
-        ...prevData.columns,
-        ["1"]: newColumn,
+    setColumns((prevColumns) => ({
+      ...prevColumns,
+      [columnId]: {
+        ...prevColumns[columnId],
+        tasks: [...prevColumns[columnId].tasks, newTask],
       },
     }));
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="bg-blue-500 text-white p-2 rounded mb-4"
-      >
+    <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
+      <button onClick={() => setModalOpen(true)} className="bg-blue-500 p-2 rounded">
         Add Task
       </button>
-
-      <TaskModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAddTask={addTask}
-      />
-
-      <div className="grid grid-cols-3 gap-4 p-4">
-        {Object.values(data.columns).map((column) => (
-          <Column
-            key={column.id}
-            column={column}
-            tasks={column.taskIds.map((taskId) => data.tasks[taskId])}
-            moveTask={moveTask}
-          />
+      <div className="flex space-x-4 p-4">
+        {Object.keys(columns).map((columnId) => (
+          <SortableContext key={columnId} items={columns[columnId].tasks.map((task) => task.id)}>
+            <Column columnId={columnId} title={columns[columnId].title} tasks={columns[columnId].tasks} />
+          </SortableContext>
         ))}
+        <TaskModal
+          addTask={addTask}
+          columns={Object.keys(columns).map((id) => ({
+            id,
+            title: columns[id].title,
+          }))}
+          isOpen={isModalOpen}
+          setIsOpen={setModalOpen}
+        />
       </div>
-    </DndProvider>
+    </DndContext>
   );
 };
+
 export default Board;

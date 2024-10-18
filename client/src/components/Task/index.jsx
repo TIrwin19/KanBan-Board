@@ -1,26 +1,26 @@
 import React from "react";
-import { useDrag, useDrop } from "react-dnd";
+import Draggable from "../Drop-Drag/Draggable";
+import { CSS } from "@dnd-kit/utilities";
+import { useSortable } from "@dnd-kit/sortable";
 
-const Task = ({ task, index, columnId }) => {
-  const [{ isDragging }, drag] = useDrag({
-    type: "TASK",
-    item: { id: task.id, index, columnId }, // Ensure we're passing the necessary props
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
+const Task = ({ task, columnId }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: task.id,
+    data: { columnId },
   });
 
+  const style = {
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    transition: transition || "transform 100ms ease, box-shadow 100ms ease, opacity 100ms ease",
+    zIndex: isDragging ? 999 : "auto",
+    opacity: isDragging ? 0.9 : 1,
+    boxShadow: isDragging ? "0 10px 20px rgba(0, 0, 0, 0.2)" : "0 1px 3px rgba(0, 0, 0, 0.1)",
+  };
+
   return (
-    <div
-      ref={drag}
-      className="bg-white p-4 mb-2 rounded shadow"
-      style={{
-        opacity: isDragging ? 0.5 : 1,
-        cursor: "move",
-      }}
-    >
-      <h4 className="font-bold">{task.title}</h4>
-      <p>Due: {task.dueDate || 'Not set'}</p> {/* Ensure we display something if dueDate is missing */}
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="draggable bg-white p-4 rounded-lg shadow-md">
+      <h3 className="font-bold">{task.title}</h3>
+      <p className="text-sm text-gray-600">{task.dueDate}</p>
     </div>
   );
 };
