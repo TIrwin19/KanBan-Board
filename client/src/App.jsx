@@ -12,6 +12,10 @@ import Project from "./pages/Project";
 import ProjectList from "./pages/ProjectList";
 import { useStore } from "./contexts/ProjectContext";
 
+
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+
 function App() {
   const { state } = useStore();
   const { user } = useAuth();
@@ -48,6 +52,7 @@ function App() {
         <Route path="*" element={<Landing />} />
       </Routes>
     </Router>
+
   );
 }
 
