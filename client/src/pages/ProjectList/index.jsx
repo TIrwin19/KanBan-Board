@@ -6,6 +6,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { LOGOUT } from "../../graphql/mutations/authMutations";
+import { AvatarMembers} from "../../components/AvatarMembers"
 
 const ProjectList = () => {
   const { logout } = useAuth();
@@ -44,6 +45,8 @@ const ProjectList = () => {
       </div>
 
 
+      <AvatarMembers />
+      
       <div className="flex flex-col flex-grow mt-6">
         <div className="mb-4 text-lg font-semibold text-gray-700">
           Your Projects
