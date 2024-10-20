@@ -122,18 +122,36 @@ const resolvers = {
 
       //Find user by email
       const member = await User.findOne({ email: userEmail })
-      if (!member) throw new Error("No one by that email exists.")
+      if (!member) {
+        return {
+          message: "No one by that email exists.",
+          color: "red"
+        }
+      } else if (project.members.includes(member._id)) {
+        //Check if user is already a member
+        return {
+          message: "User is already a member of the project.",
+          color: "yellow"
+        }
+      } else {
+        //Add the member to the project
+        project.members.push(member._id)
+        await project.save()//Save the updated project
 
-      //Check if user is already a member
-      if (project.members.includes(member._id)) {
-        throw new Error("User is already a member of the project.");
+        return {
+          message: `${member.username} has been added to ${project.title}`,
+          color: "green"
+        }
       }
+
+
+
 
       //Add the member to the project
       project.members.push(member._id)
       await project.save()//Save the updated project
 
-      return `${userEmail} has been added to ${project.title}`
+      return `${member.username} has been added to ${project.title}`
     },
 
     createColumn: async (_, { projectId, title, order }) => {
