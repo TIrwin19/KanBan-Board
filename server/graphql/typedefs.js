@@ -45,6 +45,11 @@ const typeDefs = gql`
     columns: [Column!]!
   }
 
+  type AddMemberResponse {
+    message: String!
+    color: String!
+  }
+
   type Query {
     getUser: User!
     getAdminProject(adminId: ID!): [Project!]!
@@ -55,7 +60,7 @@ const typeDefs = gql`
   type Mutation {
     createProject(title: String!, admin: ID!): Project!
     deleteProject(projectId: ID!): Boolean!
-    addMembers(projectId: ID!, adminId: ID!, userEmail: String!): String!
+    addMembers(projectId: ID!, adminId: ID!, userEmail: String!): AddMemberResponse!
 
     createColumn(projectId: ID!, title: String!, order: Int!): Column!
     deleteColumn(projectId: ID!, columnId: ID!): Boolean!

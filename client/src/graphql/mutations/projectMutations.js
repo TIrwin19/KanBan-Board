@@ -21,6 +21,9 @@ export const DELETE_PROJECT = gql`
 
 export const ADD_MEMBERS = gql`
   mutation AddMembers($projectId: ID!, $adminId: ID!, $userEmail: String!) {
-  addMembers(projectId: $projectId, adminId: $adminId, userEmail: $userEmail)
+  addMembers(projectId: $projectId, adminId: $adminId, userEmail: $userEmail){
+    color
+    message
+  }
 }
 `
