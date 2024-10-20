@@ -17,7 +17,11 @@ const Spreadsheet = () => {
   const [data, setData] = useState([
     {
       title: "Project Alpha",
-      members: "John, Sarah, Mike",
+      members: [
+        { name: "John", avatarUrl: "https://avatar.iran.liara.run/public/7" },
+        { name: "Sarah", avatarUrl: "https://avatar.iran.liara.run/public/19" },
+        { name: "Mike", avatarUrl: "https://avatar.iran.liara.run/public/27" },
+      ],
       date: "2024-10-01",
       todo: 3,
       inProgress: 2,
@@ -25,7 +29,13 @@ const Spreadsheet = () => {
     },
     {
       title: "Project Beta",
-      members: "Emily, Michael",
+      members: [
+        { name: "Emily", avatarUrl: "https://avatar.iran.liara.run/public/36" },
+        {
+          name: "Michael",
+          avatarUrl: "https://avatar.iran.liara.run/public/43",
+        },
+      ],
       date: "2024-09-28",
       todo: 4,
       inProgress: 3,
@@ -33,7 +43,17 @@ const Spreadsheet = () => {
     },
     {
       title: "Project Gamma",
-      members: "Chris, Jessica, Ashley",
+      members: [
+        { name: "Chris", avatarUrl: "https://avatar.iran.liara.run/public/53" },
+        {
+          name: "Jessica",
+          avatarUrl: "https://avatar.iran.liara.run/public/85",
+        },
+        {
+          name: "Ashley",
+          avatarUrl: "https://avatar.iran.liara.run/public/61",
+        },
+      ],
       date: "2024-09-30",
       todo: 5,
       inProgress: 1,
@@ -41,7 +61,10 @@ const Spreadsheet = () => {
     },
     {
       title: "Project Delta",
-      members: "James, Linda",
+      members: [
+        { name: "James", avatarUrl: "https://avatar.iran.liara.run/public/88" },
+        { name: "Linda", avatarUrl: "https://avatar.iran.liara.run/public/96" },
+      ],
       date: "2024-10-05",
       todo: 2,
       inProgress: 2,
@@ -49,7 +72,10 @@ const Spreadsheet = () => {
     },
     {
       title: "Project Epsilon",
-      members: "Anna, David",
+      members: [
+        { name: "Anna", avatarUrl: "https://avatar.iran.liara.run/public/62" },
+        { name: "David", avatarUrl: "https://avatar.iran.liara.run/public/41" },
+      ],
       date: "2024-10-03",
       todo: 1,
       inProgress: 3,
@@ -77,7 +103,6 @@ const Spreadsheet = () => {
     setIsDeleteModalOpen(false);
   };
 
-  //SAY THANK YOU TO CHATTY FOR SORT LOGIC LIKE WTF IS THIS<3
   const sortData = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -161,7 +186,17 @@ const Spreadsheet = () => {
               <span className="text-center w-full">{item.title}</span>
             </div>
             <div className="col-span-2 flex md:items-center md:justify-center">
-              <span className="text-center w-full">{item.members}</span>
+              <div className="flex -space-x-2">
+                {item.members.map((member, i) => (
+                  <img
+                    key={i}
+                    className="w-8 h-8 border-2 border-white rounded-full"
+                    src={member.avatarUrl}
+                    alt={member.name}
+                    title={member.name}
+                  />
+                ))}
+              </div>
               <button onClick={toggleModal}>
                 <DotsVerticalIcon className="h-5 w-5 text-gray-600 ml-2" />
               </button>
@@ -176,6 +211,7 @@ const Spreadsheet = () => {
                     &times;
                   </button>
                   <h3 className="text-xl font-bold mb-4">Project Members</h3>
+                  
                   <div className="mt-4 flex justify-end">
                     <button
                       type="button"
