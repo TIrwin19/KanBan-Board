@@ -18,9 +18,14 @@ import JoinedProjectCard from "../../components/JoinedProjectCard";
 
 const Dashboard = () => {
   const [isDiv6Expanded, setIsDiv6Expanded] = useState(true);
+  const [isJoined, setIsJoined] = useState(false);
 
   const toggleDiv6 = () => {
     setIsDiv6Expanded((prev) => !prev);
+  };
+
+  const displayJoined = () => {
+    setIsJoined(true);
   };
 
   return (

@@ -211,7 +211,18 @@ const Spreadsheet = () => {
                     &times;
                   </button>
                   <h3 className="text-xl font-bold mb-4">Project Members</h3>
-                  
+
+                  <div className="flex -space-x-2">
+                    {item.members.map((member, i) => (
+                      <img
+                        key={i}
+                        className="w-8 h-8 border-2 border-white rounded-full"
+                        src={member.avatarUrl}
+                        alt={member.name}
+                      />
+                    ))}
+                  </div>
+
                   <div className="mt-4 flex justify-end">
                     <button
                       type="button"
