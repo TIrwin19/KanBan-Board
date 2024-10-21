@@ -1,24 +1,38 @@
 import React, { useState } from "react";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import { useMutation } from "@apollo/client";
+import { CREATE_TASK } from "../../graphql/mutations/taskMutations";
+import { useStore } from "../../contexts/ProjectContext";
 
-
-const TaskModal = ({ addTask, columns, isOpen, setIsOpen }) => {
+const TaskModal = ({ columns, isOpen, setIsOpen }) => {
+  const { state } = useStore();
   const [title, setTitle] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [selectedColumnId, setSelectedColumnId] = useState(columns[0]?.id || "");
+  const [selectedColumnId, setSelectedColumnId] = useState(
+    columns[0]?.id || ""
+  );
+
+  const [createTask] = useMutation(CREATE_TASK, {
+    onCompleted: (data) => {
+      console.log("Task Created", data);
+      // addTask(data.createTask, selectedColumnId);
+      setIsOpen(false);
+    },
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title || !dueDate || !selectedColumnId) return;
 
-    const newTask = {
-      id: `task-${Date.now()}`,
-      title,
-      dueDate,
-    };
-
-    addTask(newTask, selectedColumnId);
-    setIsOpen(false);
+    createTask({
+      variables: {
+        order: `task-${Date.now()}`,
+        title: title,
+        dueDate: dueDate,
+        columnId: selectedColumnId,
+        projectId: state.projectId,
+      },
+    });
   };
 
   if (!isOpen) return null;

@@ -5,28 +5,16 @@ export const CREATE_TASK = gql`
     $projectId: ID!
     $columnId: ID!
     $title: String!
-    $description: String!
-    $order: Int!
-    $user: ID
+    $order: String!
+    $dueDate: String!
   ) {
     createTask(
       projectId: $projectId
       columnId: $columnId
       title: $title
-      description: $description
       order: $order
-      user: $user
-    ) {
-      date
-      description
-      id
-      order
-      status
-      title
-      user {
-        username
-      }
-    }
+      dueDate: $dueDate
+    ) 
   }
 `;
 

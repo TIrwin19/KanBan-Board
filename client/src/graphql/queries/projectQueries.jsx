@@ -23,3 +23,17 @@ export const GET_JOINED_PROJECT = gql`
     }
   }
 `;
+
+export const GET_TASKS = gql`
+  query GetTasks($projectId: ID!) {
+    getTasks(projectId: $projectId) {
+      order
+      title
+      tasks {
+        title
+        dueDate
+        order
+      }
+    }
+  }
+`;

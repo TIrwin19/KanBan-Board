@@ -1,45 +1,41 @@
-//NEEDS REVIEW
-
 const { model, Schema } = require('mongoose')
 
-const taskSchema = new Schema({
-  title: {
-    type: String,
-    required: true,
-    default: ""
-  },
+const taskSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      default: "",
+    },
 
-  description: {
-    type: String,
-    required: true,
-    default: ""
-  },
+    // description: {
+    //   type: String,
+    //   default: "",
+    // },
 
-  status: {
-    type: Boolean,
-    required: true,
-    default: false
-  },
+    // status: {
+    //   type: Boolean,
+    //   default: false,
+    // },
 
-  date: {
-    type: String,
-    required: true,
-    default: ""
-  },
+    dueDate: {
+      type: String,
+      required: true,
+      default: "",
+    },
 
-  order: {
-    type: Number,
-    required: true,
-  },
+    order: {
+      type: String,
+      required: true,
+    },
 
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
 
-}, {
-  timestamps: true
-})
+    //members: [{ type: Schema.Types.ObjectId, ref: 'User' }],  this is going to be needed when we add members to the tasks
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const columnSchema = new Schema({
   title: {
@@ -48,7 +44,7 @@ const columnSchema = new Schema({
   },
 
   order: {
-    type: Number,
+    type: String,
     required: true,
   },
 

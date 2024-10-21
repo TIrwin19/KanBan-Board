@@ -24,6 +24,18 @@ function validateEmail(value) {
 
 const resolvers = {
   Query: {
+    //get tasks
+    getTasks: async (_, { projectId }) => {
+      const project = await Project.findById(projectId);
+
+      if (!project) {
+        throw new Error("Project not found");
+      }
+
+      return project.columns
+    },
+
+
     // Auth resolver
     getUser: async (_, args, { req }) => {
       // Get access token from cookies
@@ -91,12 +103,31 @@ const resolvers = {
           throw new Error("Admin user not found");
         }
 
+        // Define the default columns (e.g., "To Do", "In Progress", "Done")
+        const defaultColumns = [
+          {
+            title: 'To Do',
+            order: 'column1',
+            tasks: [],
+          },
+          {
+            title: 'In Progress',
+            order: 'column2',
+            tasks: [],
+          },
+          {
+            title: 'Done',
+            order: 'column3',
+            tasks: [],
+          },
+        ];
+
         // Create the new project
         const newProject = new Project({
           title,
           admin: projectAdmin,
           // members: [user._id], // Assuming the authenticated user is the admin/creator
-          // columns: [], // Initial empty column list
+          columns: defaultColumns, // Initial empty column list
         });
 
         // Save the project to the database
@@ -169,41 +200,66 @@ const resolvers = {
       return true;
     },
 
-    updateColumnOrder: async (_, { projectId, columnId, newOrder }) => {
-      const project = await Project.findById(projectId);
+    // updateColumnOrder: async (_, { projectId, columnId, newOrder }) => {
+    //   const project = await Project.findById(projectId);
 
-      // Find the column to be moved
-      const column = project.columns.id(columnId);
-      if (!column) {
-        throw new Error("Column not found");
+    //   // Find the column to be moved
+    //   const column = project.columns.id(columnId);
+    //   if (!column) {
+    //     throw new Error("Column not found");
+    //   }
+
+    //   // Remove the column from its current position
+    //   project.columns = project.columns.filter((col) => col.id !== columnId);
+
+    //   // Insert the column at the new order
+    //   project.columns.splice(newOrder, 0, column);
+
+    //   // Update the order property of columns based on the new order
+    //   project.columns.forEach((col, index) => {
+    //     col.order = index; // Update order based on index
+    //   });
+
+    //   await project.save();
+    //   return project;
+    // },
+
+    createTask: async (_, { projectId, columnId, title, order, dueDate }) => {
+      try {
+        // Find the project by ID
+        const project = await Project.findById(projectId);
+        if (!project) {
+          throw new Error("Project not found");
+        }
+
+        // Find the column where the order property matches columnId
+        const column = project.columns.find(col => col.order === columnId);
+        if (!column) {
+          throw new Error("Column with the specified order not found");
+        }
+
+        // Ensure task has necessary details
+        if (!title || !order || !dueDate) {
+          throw new Error("Title, order, and due date are required");
+        }
+
+        // Create the task object
+        const task = { title, order, dueDate };
+
+        // Add the task to the column's task list
+        column.tasks.push(task);
+
+        // Save the project with the new task
+        await project.save();
+
+        return "Task has been created";
+      } catch (err) {
+        // Handle and log the error
+        console.error("Error creating task:", err.message);
+        throw new Error("Failed to create task: " + err.message);
       }
-
-      // Remove the column from its current position
-      project.columns = project.columns.filter((col) => col.id !== columnId);
-
-      // Insert the column at the new order
-      project.columns.splice(newOrder, 0, column);
-
-      // Update the order property of columns based on the new order
-      project.columns.forEach((col, index) => {
-        col.order = index; // Update order based on index
-      });
-
-      await project.save();
-      return project;
     },
 
-    createTask: async (
-      _,
-      { projectId, columnId, title, description, order, user }
-    ) => {
-      const project = await Project.findById(projectId);
-      const column = project.columns.id(columnId);
-      const task = { title, description, order, user };
-      column.tasks.push(task);
-      await project.save();
-      return task;
-    },
 
     deleteTask: async (_, { projectId, columnId, taskId }) => {
       const project = await Project.findById(projectId);

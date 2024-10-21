@@ -19,17 +19,17 @@ const typeDefs = gql`
   type Task {
     id: ID!
     title: String!
-    description: String!
-    status: Boolean!
-    date: String!
-    order: Int!
-    user: [User!]!
+    # description: String
+    # status: Boolean
+    dueDate: String!
+    order: String!
+    # user: [User!]!
   }
 
   type Column {
     id: ID!
     title: String!
-    order: Int!
+    order: String!
     tasks: [Task!]!
   }
 
@@ -55,6 +55,7 @@ const typeDefs = gql`
     getAdminProject(adminId: ID!): [Project!]!
     getJoinedProject(userId: ID!): [Project!]!
     getUserAvatar(userId: ID!): String!
+    getTasks(projectId: ID!): [Column!]!
   }
 
   type Mutation {
@@ -62,7 +63,7 @@ const typeDefs = gql`
     deleteProject(projectId: ID!): Boolean!
     addMembers(projectId: ID!, adminId: ID!, userEmail: String!): AddMemberResponse!
 
-    createColumn(projectId: ID!, title: String!, order: Int!): Column!
+    createColumn(projectId: ID!, title: String!, order: String!): Column!
     deleteColumn(projectId: ID!, columnId: ID!): Boolean!
     updateColumnOrder(projectId: ID!, columnId: ID!, newOrder: Int!): Project!
 
@@ -70,10 +71,12 @@ const typeDefs = gql`
       projectId: ID!
       columnId: ID!
       title: String!
-      description: String!
-      order: Int!
-      user: ID
-    ): Task!
+      # description: String!
+      order: String!
+      dueDate: String!
+      # user: ID
+    ): String!
+    
     deleteTask(projectId: ID!, columnId: ID!, taskId: ID!): Boolean!
     moveTask(
       projectId: ID!
