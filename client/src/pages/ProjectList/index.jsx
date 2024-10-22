@@ -6,7 +6,6 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { LOGOUT } from "../../graphql/mutations/authMutations";
-import { AvatarMembers} from "../../components/AvatarMembers"
 
 const ProjectList = () => {
   const { logout } = useAuth();
@@ -21,11 +20,8 @@ const ProjectList = () => {
 
   return (
     <div className="text-[#363636] p-4 flex flex-col bg-gray-50">
-
       <div className="flex justify-between items-center bg-gray-100 p-4 rounded-t-lg border-b border-gray-300">
-        <div className="text-2xl font-bold">
-          Hello, User!
-        </div>
+        <div className="text-2xl font-bold">Hello, User!</div>
         <div className="flex space-x-4">
           <NavLink
             to="/dashboard"
@@ -44,12 +40,18 @@ const ProjectList = () => {
         </div>
       </div>
 
-
-      <AvatarMembers />
-      
       <div className="flex flex-col flex-grow mt-6">
-        <div className="mb-4 text-lg font-semibold text-gray-700">
-          Your Projects
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-lg font-semibold text-gray-700">
+            Your Projects
+          </div>
+          <label className="flex items-center space-x-2 text-gray-700">
+            <input
+              type="checkbox"
+              className="form-checkbox h-4 w-4 text-gray-600"
+            />
+            <span className="text-lg font-semibold">Admin Projects</span>
+          </label>
         </div>
         <div className="border border-gray-200 shadow-sm rounded-lg overflow-hidden">
           <Spreadsheet />
