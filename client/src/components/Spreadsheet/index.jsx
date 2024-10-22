@@ -8,11 +8,20 @@ import {
   PlusCircleIcon,
   TrashIcon,
 } from "@heroicons/react/solid";
+import MemberModal from "./MemberModal";
+import DeleteModal from "./DeleteModal";
+import EditModal from "./EditModal";
+import AddModal from "./AddModal";
+
+
 
 const Spreadsheet = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState(null);
+  const [selectedMembers, setSelectedMembers] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
   const [data, setData] = useState([
     {
@@ -83,8 +92,30 @@ const Spreadsheet = () => {
     },
   ]);
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  //ALL MODALS SECTION
+
+  //members modal section
+  const openModal = (members) => {
+    setSelectedMembers(members);
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedMembers([]);
+  };
+
+  const handleAddMember = () => {
+    closeModal();
+    openAddModal();
+  };
+  //members modal section end
+
+  const openEditModal = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
   };
 
   //REWORK DELETE TO WORK WITH ID
@@ -102,13 +133,15 @@ const Spreadsheet = () => {
     }
     setIsDeleteModalOpen(false);
   };
+  //ALL MODALS SECTION
 
+
+  ///SORTING LOGIC////////
   const sortData = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
     }
-
     const sortedData = [...data].sort((a, b) => {
       if (key === "title") {
         return direction === "asc"
@@ -137,6 +170,7 @@ const Spreadsheet = () => {
     }
     return <SelectorIcon className="h-4 w-4 inline ml-1" />;
   };
+  ///SORTING LOGIC ///////
 
   return (
     <div className="text-[#363636] p-4 flex flex-col">
@@ -197,51 +231,10 @@ const Spreadsheet = () => {
                   />
                 ))}
               </div>
-              <button onClick={toggleModal}>
+              <button onClick={() => openModal(item.members)}>
                 <DotsVerticalIcon className="h-5 w-5 text-gray-600 ml-2" />
               </button>
             </div>
-            {isModalOpen && (
-              <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
-                  <button
-                    onClick={toggleModal}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl"
-                  >
-                    &times;
-                  </button>
-                  <h3 className="text-xl font-bold mb-4">Project Members</h3>
-
-                  <div className="flex -space-x-2">
-                    {item.members.map((member, i) => (
-                      <img
-                        key={i}
-                        className="w-8 h-8 border-2 border-white rounded-full"
-                        src={member.avatarUrl}
-                        alt={member.name}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={toggleModal}
-                      className="mr-2 py-2 px-4 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 text-gray-800"
-                    >
-                      Add Member
-                    </button>
-                    <button
-                      type="button"
-                      onClick={toggleModal}
-                      className="mr-2 py-2 px-4 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 text-gray-800"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
             <div className="md:col-span-1 text-center mt-2 md:mt-0">
               <span>{item.date}</span>
             </div>
@@ -260,60 +253,53 @@ const Spreadsheet = () => {
 
             <div className="md:col-span-2 flex md:flex-row justify-center space-x-2 mt-2 md:mt-0">
               <button
-                className="flex items-center bg-blue-600 text-white px-3 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out"
-                title="Edit Project"
+                className="flex items-center bg-blue-200 px-2 py-1 rounded-md text-sm"
+                title="Edit"
+                onClick={() => openEditModal()}
               >
-                <PencilAltIcon className="h-5 w-5 mr-1" />
+                <PencilAltIcon className="h-4 w-4" />
               </button>
               <button
-                className="flex items-center bg-green-600 text-white px-3 py-2 rounded-lg shadow-md hover:bg-green-700 transition duration-200 ease-in-out"
-                title="Add Member"
+                className="flex items-center bg-green-200 px-2 py-1 rounded-md text-sm"
+                title="Edit Members"
+                onClick={() => openAddModal()}
               >
-                <PlusCircleIcon className="h-5 w-5 mr-1" />
+                <PlusCircleIcon className="h-4 w-4" />
               </button>
-
               <button
-                onClick={() => toggleDeleteModal(index)}
-                className="flex items-center bg-red-600 text-white px-3 py-2 rounded-lg shadow-md hover:bg-red-700 transition duration-200 ease-in-out"
-                title="Delete Project"
+                className="flex items-center bg-red-200 px-2 py-1 rounded-md text-sm"
+                title="Delete"
+                onClick={() => toggleDeleteModal(item)}
               >
-                <TrashIcon className="h-5 w-5 mr-1" />
+                <TrashIcon className="h-4 w-4" />
               </button>
             </div>
-
-            {isDeleteModalOpen && (
-              <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
-                  <button
-                    onClick={toggleDeleteModal}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl"
-                  >
-                    &times;
-                  </button>
-                  <h3 className="text-xl font-bold mb-4">Confirm Delete</h3>
-                  <p>Are you sure you want to delete the project?</p>
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={confirmDelete}
-                      className="mr-2 py-2 px-4 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 text-gray-800"
-                    >
-                      Confirm
-                    </button>
-                    <button
-                      type="button"
-                      onClick={toggleDeleteModal}
-                      className="mr-2 py-2 px-4 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 text-gray-800"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         ))}
       </div>
+
+      <MemberModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        members={selectedMembers}
+        onAddMember={handleAddMember}
+      />
+
+      <EditModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
+
+      <AddModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
+      
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 };
