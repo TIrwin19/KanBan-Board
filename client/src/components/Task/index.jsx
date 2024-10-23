@@ -1,28 +1,30 @@
 import React from "react";
-import Draggable from "../Drop-Drag/Draggable";
+
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 
-const Task = ({ task, columnId }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: task.id,
-    data: { columnId },
-  });
+export function Task({ task }) {
+  return (
+    <div className="draggable bg-white p-4 rounded-lg shadow-md">
+      <h3 className="font-bold">{task.props.task.title}</h3>
+      <p className="text-sm text-gray-600">{task.props.task.dueDate}</p>
+    </div>
+  );
+}
+
+export default function SortableItem(props) {
+  const { id, task } = props;
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
 
   const style = {
-    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-    transition: transition || "transform 100ms ease, box-shadow 100ms ease, opacity 100ms ease",
-    zIndex: isDragging ? 999 : "auto",
-    opacity: isDragging ? 0.9 : 1,
-    boxShadow: isDragging ? "0 10px 20px rgba(0, 0, 0, 0.2)" : "0 1px 3px rgba(0, 0, 0, 0.1)",
+    transform: CSS.Transform.toString(transform),
+    transition,
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="draggable bg-white p-4 rounded-lg shadow-md">
-      <h3 className="font-bold">{task.title}</h3>
-      <p className="text-sm text-gray-600">{task.dueDate}</p>
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <Task task={task} />
     </div>
   );
-};
-
-export default Task;
+}

@@ -164,7 +164,7 @@ export default function User() {
 
           <div className="mt-4 flex flex-col gap-3">
             <NavLink
-              to={`/projectlist/`}
+              to={`/projectlist/${user.id}`}
               className="flex items-center gap-2 p-2 transition-all duration-200 text-gray-700 hover:text-black hover:font-bold"
             >
               <ChartBarIcon className="h-5 w-5" />
