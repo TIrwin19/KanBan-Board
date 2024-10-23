@@ -12,14 +12,12 @@ import Project from "./pages/Project";
 import ProjectList from "./pages/ProjectList";
 import { useStore } from "./contexts/ProjectContext";
 
-
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 function App() {
   const { state } = useStore();
   const { user } = useAuth();
-  // console.log(user.id);
 
   return (
     <Router>
@@ -41,6 +39,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {/* ${user.id} breaks upon expired token REDO */}
         <Route
           path={`/projectlist/`}
           element={
@@ -52,7 +51,6 @@ function App() {
         <Route path="*" element={<Landing />} />
       </Routes>
     </Router>
-
   );
 }
 

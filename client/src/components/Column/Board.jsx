@@ -48,56 +48,6 @@ const Board = () => {
     }
   }, [data]);
 
-  // const sensors = useSensors(
-  //   useSensor(PointerSensor)
-  //   // useSensor(KeyboardSensor, {
-  //   //   coordinateGetter: sortableKeyboardCoordinates,
-  //   // })
-  // );
-
-  // const handleDragEnd = (event) => {
-  //   const { active, over } = event;
-  //   if (!over) return;
-
-  //   const { id: activeId } = active;
-  //   const { id: overId } = over;
-
-  //   if (activeId !== overId) {
-  //     const activeColumnId = active.data.current.columnId;
-  //     const overColumnId = over.data.current.columnId;
-
-  //     const activeColumn = columns[activeColumnId];
-  //     const overColumn = columns[overColumnId];
-
-  //     const activeIndex = activeColumn.tasks.findIndex(
-  //       (task) => task.id === activeId
-  //     );
-  //     const overIndex = overColumn.tasks.findIndex(
-  //       (task) => task.id === overId
-  //     );
-
-  //     const newActiveTasks = [...activeColumn.tasks];
-  //     const [movedTask] = newActiveTasks.splice(activeIndex, 1);
-
-  //     const newOverTasks = [...overColumn.tasks];
-  //     newOverTasks.splice(overIndex, 0, movedTask);
-
-  //     const updatedColumns = {
-  //       ...columns,
-  //       [activeColumnId]: {
-  //         ...activeColumn,
-  //         tasks: newActiveTasks,
-  //       },
-  //       [overColumnId]: {
-  //         ...overColumn,
-  //         tasks: newOverTasks,
-  //       },
-  //     };
-
-  //     setColumns(updatedColumns);
-  //   }
-  // };
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
