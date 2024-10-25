@@ -10,10 +10,12 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useStore } from "../../contexts/ProjectContext.jsx";
+import TaskModal from "../Task/TaskModal.jsx"
 
 // Import the existing components
 import Column from "./index.jsx";
 import { Task } from "../Task/index.jsx";
+import SortableItem from "../Task/index.jsx";
 
 import { useQuery } from "@apollo/client";
 import { GET_TASKS } from "../../graphql/queries/projectQueries.jsx";
@@ -57,22 +59,37 @@ export default function NewBoard() {
     column1: {
       title: "To Do",
       order: "column1",
-      tasks: [{ id: "task1", title: "Task 1", dueDate: "2023-10-01" }],
+      tasks: [{ id: "task1", title: "Example 1", dueDate: "2023-10-01" }],
     },
     column2: {
       title: "In Progress",
       order: "column2",
-      tasks: [{ id: "task2", title: "Task 2", dueDate: "2023-10-02" }],
+      tasks: [{ id: "task2", title: "Example 2", dueDate: "2023-10-02" }],
     },
     column3: {
       title: "Done",
       order: "column3",
-      tasks: [{ id: "task3", title: "Task 3", dueDate: "2023-10-03" }],
+      tasks: [{ id: "task3", title: "Example 3", dueDate: "2023-10-03" }],
     },
   });
 
   const [activeId, setActiveId] = useState();
   const [isModalOpen, setModalOpen] = useState(false);
+
+  const addTask = (newTask, columnId) => {
+    if (!columns[columnId]) {
+      console.error(`Column with id ${columnId} does not exist.`);
+      return;
+    }
+
+    setColumns((prevColumns) => ({
+      ...prevColumns,
+      [columnId]: {
+        ...prevColumns[columnId],
+        tasks: [...prevColumns[columnId].tasks, newTask],
+      },
+    }));
+  };
 
   const { state } = useStore(); // Assuming you have a ProjectContext
 
@@ -87,18 +104,20 @@ export default function NewBoard() {
     if (data) {
       const tasks = data.getTasks;
 
-      const updatedColumns = { ...columns };
-      tasks.forEach((column) => {
-        const columnId = column.order;
-        console.log(column);
-        console.log(columnId);
-        if (!updatedColumns[columnId]) {
-          updatedColumns[columnId] = { title: column.title, tasks: [] };
-        }
-        updatedColumns[columnId].tasks = column.tasks;
-      });
+      setColumns((prevColumns) => {
+        const updatedColumns = { ...prevColumns };
+        tasks.forEach((column) => {
+          const columnId = column.order;
+          console.log(column);
+          console.log("ColumnId", columnId);
+          if (!updatedColumns[columnId]) {
+            updatedColumns[columnId] = { title: column.title, tasks: [] };
+          }
+          updatedColumns[columnId].tasks = column.tasks;
+        });
 
-      setColumns(updatedColumns);
+        return updatedColumns;
+      });
     }
   }, [data]);
 
@@ -111,7 +130,8 @@ export default function NewBoard() {
 
   function findTaskById(id) {
     for (const column of Object.values(columns)) {
-      const task = column.tasks.find((task) => task.id === id);
+      const task = column.tasks?.find((task) => task.id === id);
+      console.log("findTaskById", task);
       if (task) {
         return task;
       }
@@ -121,6 +141,7 @@ export default function NewBoard() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
+
   return (
     <div className="flex space-x-4">
       <DndContext
@@ -131,40 +152,63 @@ export default function NewBoard() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
+        <button onClick={() => setModalOpen(true)} className="h-fit bg-blue-500 p-2 rounded">
+          Add Task
+        </button>
+
+        <TaskModal
+          addTask={addTask}
+          columns={Object.keys(columns).map((id) => ({
+            id,
+            title: columns[id].title,
+          }))}
+          isOpen={isModalOpen}
+          setIsOpen={setModalOpen}
+        />
+
         {Object.keys(columns).map((columnId) => (
           <Column
             key={columnId}
             title={columns[columnId].title}
             columnId={columnId}
-            tasks={columns[columnId].tasks.map((task, index) => (
-              <Task
-                key={`${task.id}-${index}`}
-                task={task}
-                columnId={columnId}
-              />
-            ))}
+            tasks={columns[columnId].tasks}
           />
         ))}
         <DragOverlay>
-          {activeId ? <Task task={findTaskById(activeId)} /> : null}
+          {activeId ? <Task id={activeId} task={findTaskById(activeId)} /> : null}
         </DragOverlay>
       </DndContext>
     </div>
   );
 
+  function findTaskById(id) {
+    for (const column of Object.values(columns)) {
+      const task = column.tasks?.find((task) => task.id === id);
+      if (task) {
+        return task;
+      }
+    }
+    return null;
+  }
+
   function handleDragStart(event) {
     const { active } = event;
     const { id } = active;
-
+    console.log("Drag Start:", id);
     setActiveId(id);
+  }
+
+  function findColumn(id) {
+    return Object.keys(columns).find((key) =>
+      columns[key].tasks.some((task) => task.order === id)
+    );
   }
 
   function handleDragOver(event) {
     const { active, over, draggingRect } = event;
     const { id } = active;
-    const { id: overId } = over;
-
-    // Find the columns
+    const { id: overId } = over || {};
+    console.log("Drag Over:", id, overId);
     const activeColumn = findColumn(id);
     const overColumn = findColumn(overId);
 
@@ -176,39 +220,38 @@ export default function NewBoard() {
       const activeItems = prev[activeColumn];
       const overItems = prev[overColumn];
 
-      // Find the indexes for the items
-      const activeIndex = activeItems.tasks.indexOf(id);
-      const overIndex = overItems.tasks.indexOf(overId);
+      const activeIndex = activeItems.tasks.findIndex((task) => task.order === id);
+      const overIndex = overItems.tasks.findIndex((task) => task.order === overId);
 
       let newIndex;
       if (overId in prev) {
-        // We're at the root droppable of a column
         newIndex = overItems.tasks.length + 1;
       } else {
         const isBelowLastItem =
           over &&
           overIndex === overItems.tasks.length - 1 &&
+          draggingRect &&
           draggingRect.offsetTop > over.rect.offsetTop + over.rect.height;
 
         const modifier = isBelowLastItem ? 1 : 0;
 
-        newIndex =
-          overIndex >= 0 ? overIndex + modifier : overItems.tasks.length + 1;
+        newIndex = overIndex >= 0 ? overIndex + modifier : overItems.tasks.length + 1;
       }
 
       return {
         ...prev,
-        [activeColumn]: [
-          ...prev[activeColumn].tasks.filter((item) => item !== active.id),
-        ],
-        [overColumn]: [
-          ...prev[overColumn].tasks.slice(0, newIndex),
-          id,
-          ...prev[overColumn].tasks.slice(
-            newIndex,
-            prev[overColumn].tasks.length
-          ),
-        ],
+        [activeColumn]: {
+          ...prev[activeColumn],
+          tasks: prev[activeColumn].tasks.filter((item) => item.order !== id),
+        },
+        [overColumn]: {
+          ...prev[overColumn],
+          tasks: [
+            ...prev[overColumn].tasks.slice(0, newIndex),
+            prev[activeColumn].tasks[activeIndex],
+            ...prev[overColumn].tasks.slice(newIndex, prev[overColumn].tasks.length),
+          ],
+        },
       };
     });
   }
@@ -216,35 +259,28 @@ export default function NewBoard() {
   function handleDragEnd(event) {
     const { active, over } = event;
     const { id: activeId } = active;
-    const { id: overId } = over;
-
-    const activeColumn = findColumn(id);
+    const { id: overId } = over || {};
+    console.log("Drag End:", activeId, overId);
+    const activeColumn = findColumn(activeId);
     const overColumn = findColumn(overId);
 
     if (!activeColumn || !overColumn || activeColumn !== overColumn) {
       return;
     }
 
-    const activeIndex = columns[activeColumn].tasks.indexOf(activeId);
-    const overIndex = columns[overColumn].tasks.indexOf(overId);
+    const activeIndex = columns[activeColumn].tasks.findIndex((task) => task.order === activeId);
+    const overIndex = columns[overColumn].tasks.findIndex((task) => task.order === overId);
 
     if (activeIndex !== overIndex) {
       setColumns((columns) => ({
         ...columns,
-        [overColumn]: arrayMove(
-          columns[overColumn].tasks,
-          activeIndex,
-          overIndex
-        ),
+        [overColumn]: {
+          ...columns[overColumn],
+          tasks: arrayMove(columns[overColumn].tasks, activeIndex, overIndex),
+        },
       }));
     }
 
     setActiveId(null);
-  }
-
-  function findColumn(id) {
-    return Object.keys(columns).find((key) =>
-      columns[key].tasks.some((task) => task.id === id)
-    );
   }
 }

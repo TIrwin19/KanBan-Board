@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { ExternalLinkIcon, LogoutIcon } from "@heroicons/react/outline";
 import Spreadsheet from "../../components/Spreadsheet";
 import { useAuth } from "../../contexts/AuthContext";
@@ -8,9 +8,10 @@ import { useMutation } from "@apollo/client";
 import { LOGOUT } from "../../graphql/mutations/authMutations";
 
 const ProjectList = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const [logoutMutation] = useMutation(LOGOUT);
+
 
   const handleLogout = async () => {
     logout();
@@ -18,10 +19,15 @@ const ProjectList = () => {
     navigate("/");
   };
 
+
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
   return (
     <div className="text-[#363636] p-4 flex flex-col bg-gray-50">
       <div className="flex justify-between items-center bg-gray-100 p-4 rounded-t-lg border-b border-gray-300">
-        <div className="text-2xl font-bold">Hello, User!</div>
+        <div className="text-2xl font-bold">{`Hello, ${capitalizeFirstLetter(user.username)}!`}</div>
         <div className="flex space-x-4">
           <NavLink
             to="/dashboard"

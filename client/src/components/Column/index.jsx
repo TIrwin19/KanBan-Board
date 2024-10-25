@@ -14,10 +14,18 @@ const Column = (props) => {
     id: columnId,
   });
 
+  tasks.map((task, index) => {
+    console.log("task: ", task);
+    console.log("index: ", index);
+    console.log("taskId: ", task.id);
+    console.log("taskOrder", task.order)
+  }
+  )
+
   return (
     <SortableContext
       id={columnId}
-      items={tasks}
+      items={tasks.map(task => task.order) || []} // Use order as the item id
       strategy={verticalListSortingStrategy}
     >
       <div
@@ -26,11 +34,11 @@ const Column = (props) => {
       >
         <h2 className="text-lg font-bold mb-4 text-gray-800">{title}</h2>
         <div className="space-y-2">
-          {tasks.map((task, index) => (
+          {tasks && tasks.map((task, index) => (
             <SortableItem
-              key={`${task.id}-${index}`}
+              key={`${task.order}-${index}`}
               task={task}
-              id={task.id}
+              id={task.order}
             />
           ))}
         </div>
