@@ -17,7 +17,6 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 
 function App() {
   const { state } = useStore();
-  const { user } = useAuth();
 
   return (
     <Router>
@@ -41,7 +40,7 @@ function App() {
         />
         {/* ${user.id} breaks upon expired token REDO */}
         <Route
-          path={`/projectlist/`}
+          path={`/projectlist/:userId`}
           element={
             <ProtectedRoute>
               <ProjectList />

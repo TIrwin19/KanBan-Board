@@ -12,10 +12,12 @@ import MemberModal from "./MemberModal";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
 import AddModal from "./AddModal";
+import { useAuth } from "../../contexts/AuthContext";
 
 
 
 const Spreadsheet = () => {
+  const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -91,6 +93,8 @@ const Spreadsheet = () => {
       done: 2,
     },
   ]);
+
+  console.log(user)
 
   //ALL MODALS SECTION
 
@@ -294,7 +298,7 @@ const Spreadsheet = () => {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
       />
-      
+
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

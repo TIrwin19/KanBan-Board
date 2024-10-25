@@ -11,21 +11,8 @@ body {
 /* Add smooth transitions for transform and opacity */
 /* Add smooth transitions for transform and opacity */
 .draggable {
-  transition: transform 150ms ease, opacity 150ms ease;
+  cursor: grab;
 }
-
-/* Add a slight shadow to the dragging item */
-.draggable.dragging {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Ensure the droppable container takes up the full width */
-.droppable-container {
-  display: flex;
-  gap: 1px;
-  padding: 1px;
-}
-
 
 
 /* modal task */
