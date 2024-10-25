@@ -175,9 +175,6 @@ const resolvers = {
         }
       }
 
-
-
-
       //Add the member to the project
       project.members.push(member._id)
       await project.save()//Save the updated project

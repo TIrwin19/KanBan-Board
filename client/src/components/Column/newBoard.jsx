@@ -10,7 +10,7 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useStore } from "../../contexts/ProjectContext.jsx";
-import TaskModal from "../Task/TaskModal.jsx"
+import TaskModal from "../Task/TaskModal.jsx";
 
 // Import the existing components
 import Column from "./index.jsx";
@@ -108,8 +108,8 @@ export default function NewBoard() {
         const updatedColumns = { ...prevColumns };
         tasks.forEach((column) => {
           const columnId = column.order;
-          console.log(column);
-          console.log("ColumnId", columnId);
+          // console.log(column);
+          // console.log("ColumnId", columnId);
           if (!updatedColumns[columnId]) {
             updatedColumns[columnId] = { title: column.title, tasks: [] };
           }
@@ -128,16 +128,16 @@ export default function NewBoard() {
     })
   );
 
-  function findTaskById(id) {
-    for (const column of Object.values(columns)) {
-      const task = column.tasks?.find((task) => task.id === id);
-      console.log("findTaskById", task);
-      if (task) {
-        return task;
-      }
-    }
-    return null;
-  }
+  // function findTaskById(id) {
+  //   for (const column of Object.values(columns)) {
+  //     const task = column.tasks?.find((task) => task.id === id);
+  //     // console.log("findTaskById", task);
+  //     if (task) {
+  //       return task;
+  //     }
+  //   }
+  //   return null;
+  // }
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -152,7 +152,10 @@ export default function NewBoard() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <button onClick={() => setModalOpen(true)} className="h-fit bg-blue-500 p-2 rounded">
+        <button
+          onClick={() => setModalOpen(true)}
+          className="h-fit bg-blue-500 p-2 rounded"
+        >
           Add Task
         </button>
 
@@ -175,7 +178,9 @@ export default function NewBoard() {
           />
         ))}
         <DragOverlay>
-          {activeId ? <Task id={activeId} task={findTaskById(activeId)} /> : null}
+          {activeId ? (
+            <Task id={activeId} task={findTaskById(activeId)} />
+          ) : null}
         </DragOverlay>
       </DndContext>
     </div>
@@ -183,7 +188,7 @@ export default function NewBoard() {
 
   function findTaskById(id) {
     for (const column of Object.values(columns)) {
-      const task = column.tasks?.find((task) => task.id === id);
+      const task = column.tasks?.find((task) => task.order === id);
       if (task) {
         return task;
       }
@@ -194,7 +199,7 @@ export default function NewBoard() {
   function handleDragStart(event) {
     const { active } = event;
     const { id } = active;
-    console.log("Drag Start:", id);
+    // console.log("Drag Start:", id);
     setActiveId(id);
   }
 
@@ -208,7 +213,7 @@ export default function NewBoard() {
     const { active, over, draggingRect } = event;
     const { id } = active;
     const { id: overId } = over || {};
-    console.log("Drag Over:", id, overId);
+    // console.log("Drag Over:", id, overId);
     const activeColumn = findColumn(id);
     const overColumn = findColumn(overId);
 
@@ -220,8 +225,12 @@ export default function NewBoard() {
       const activeItems = prev[activeColumn];
       const overItems = prev[overColumn];
 
-      const activeIndex = activeItems.tasks.findIndex((task) => task.order === id);
-      const overIndex = overItems.tasks.findIndex((task) => task.order === overId);
+      const activeIndex = activeItems.tasks.findIndex(
+        (task) => task.order === id
+      );
+      const overIndex = overItems.tasks.findIndex(
+        (task) => task.order === overId
+      );
 
       let newIndex;
       if (overId in prev) {
@@ -235,7 +244,8 @@ export default function NewBoard() {
 
         const modifier = isBelowLastItem ? 1 : 0;
 
-        newIndex = overIndex >= 0 ? overIndex + modifier : overItems.tasks.length + 1;
+        newIndex =
+          overIndex >= 0 ? overIndex + modifier : overItems.tasks.length + 1;
       }
 
       return {
@@ -249,7 +259,10 @@ export default function NewBoard() {
           tasks: [
             ...prev[overColumn].tasks.slice(0, newIndex),
             prev[activeColumn].tasks[activeIndex],
-            ...prev[overColumn].tasks.slice(newIndex, prev[overColumn].tasks.length),
+            ...prev[overColumn].tasks.slice(
+              newIndex,
+              prev[overColumn].tasks.length
+            ),
           ],
         },
       };
@@ -259,26 +272,58 @@ export default function NewBoard() {
   function handleDragEnd(event) {
     const { active, over } = event;
     const { id: activeId } = active;
-    const { id: overId } = over || {};
-    console.log("Drag End:", activeId, overId);
+    const { id: overId } = over;
+    // console.log("Drag End:", activeId, overId);
     const activeColumn = findColumn(activeId);
     const overColumn = findColumn(overId);
 
-    if (!activeColumn || !overColumn || activeColumn !== overColumn) {
+    if (!activeColumn) {
       return;
     }
 
-    const activeIndex = columns[activeColumn].tasks.findIndex((task) => task.order === activeId);
-    const overIndex = columns[overColumn].tasks.findIndex((task) => task.order === overId);
+    if (!overColumn) {
+      // Handle dropping into an empty column
+      const emptyColumn = Object.keys(columns).find(
+        (key) => columns[key].tasks.length === 0
+      );
 
-    if (activeIndex !== overIndex) {
-      setColumns((columns) => ({
-        ...columns,
-        [overColumn]: {
-          ...columns[overColumn],
-          tasks: arrayMove(columns[overColumn].tasks, activeIndex, overIndex),
-        },
-      }));
+      console.log("emptyColumn", emptyColumn);
+
+      if (emptyColumn) {
+        const task = findTaskById(activeId);
+        if (task) {
+          setColumns((columns) => ({
+            ...columns,
+            [activeColumn]: {
+              ...columns[activeColumn],
+              tasks: columns[activeColumn].tasks.filter(
+                (task) => task.order !== activeId
+              ),
+            },
+            [emptyColumn]: {
+              ...columns[emptyColumn],
+              tasks: [...columns[emptyColumn].tasks, task],
+            },
+          }));
+        }
+      }
+    } else {
+      const activeIndex = columns[activeColumn].tasks.findIndex(
+        (task) => task.order === activeId
+      );
+      const overIndex = columns[overColumn].tasks.findIndex(
+        (task) => task.order === overId
+      );
+
+      if (activeIndex !== overIndex) {
+        setColumns((columns) => ({
+          ...columns,
+          [overColumn]: {
+            ...columns[overColumn],
+            tasks: arrayMove(columns[overColumn].tasks, activeIndex, overIndex),
+          },
+        }));
+      }
     }
 
     setActiveId(null);

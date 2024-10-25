@@ -14,33 +14,30 @@ const Column = (props) => {
     id: columnId,
   });
 
-  tasks.map((task, index) => {
-    console.log("task: ", task);
-    console.log("index: ", index);
-    console.log("taskId: ", task.id);
-    console.log("taskOrder", task.order)
-  }
-  )
-
   return (
     <SortableContext
       id={columnId}
-      items={tasks.map(task => task.order) || []} // Use order as the item id
+      items={tasks.map((task) => task.order) || []} // Use order as the item id
       strategy={verticalListSortingStrategy}
     >
-      <div
-        ref={setNodeRef}
-        className="bg-gray-100 w-80 p-4 rounded-lg shadow-lg"
-      >
+      <div className="bg-gray-100 w-80 p-4 rounded-lg shadow-lg">
         <h2 className="text-lg font-bold mb-4 text-gray-800">{title}</h2>
-        <div className="space-y-2">
-          {tasks && tasks.map((task, index) => (
-            <SortableItem
-              key={`${task.order}-${index}`}
-              task={task}
-              id={task.order}
-            />
-          ))}
+        <div ref={setNodeRef} className="space-y-2 min-h-full min-w-full">
+          {tasks.length === 0 ? (
+            <div className="placeholder h-20 flex items-center justify-center text-gray-400">
+              Drop tasks here
+            </div>
+          ) : (
+            tasks.map((task, index) =>
+              task ? (
+                <SortableItem
+                  key={`${task.order}-${index}`}
+                  task={task}
+                  id={task.order}
+                />
+              ) : null
+            )
+          )}
         </div>
       </div>
     </SortableContext>

@@ -76,6 +76,8 @@ const typeDefs = gql`
       dueDate: String!
       # user: ID
     ): String!
+
+    updateTasks(projectId: ID!): String!
     
     deleteTask(projectId: ID!, columnId: ID!, taskId: ID!): Boolean!
     moveTask(
