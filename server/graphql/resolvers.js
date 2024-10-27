@@ -197,30 +197,6 @@ const resolvers = {
       return true;
     },
 
-    // updateColumnOrder: async (_, { projectId, columnId, newOrder }) => {
-    //   const project = await Project.findById(projectId);
-
-    //   // Find the column to be moved
-    //   const column = project.columns.id(columnId);
-    //   if (!column) {
-    //     throw new Error("Column not found");
-    //   }
-
-    //   // Remove the column from its current position
-    //   project.columns = project.columns.filter((col) => col.id !== columnId);
-
-    //   // Insert the column at the new order
-    //   project.columns.splice(newOrder, 0, column);
-
-    //   // Update the order property of columns based on the new order
-    //   project.columns.forEach((col, index) => {
-    //     col.order = index; // Update order based on index
-    //   });
-
-    //   await project.save();
-    //   return project;
-    // },
-
     createTask: async (_, { projectId, columnId, title, order, dueDate }) => {
       try {
         // Find the project by ID
@@ -257,6 +233,55 @@ const resolvers = {
       }
     },
 
+    updateProjectColumns: async (_, { projectId, columns }) => {
+      try {
+        // Locate project
+        const project = await Project.findById(projectId);
+        // console.log("Project before update:", project);
+        console.log("columns:", columns);
+
+        if (!project) throw new Error("Project not found");
+
+        // Update each column's details
+        columns.forEach(updatedColumn => {
+          // Find the column by order instead of id
+          const column = project.columns.find(c => c.order === updatedColumn.order);
+          if (column) {
+            console.log("Updating column:", column.order);
+            // Update order if needed
+            if (updatedColumn.order) column.order = updatedColumn.order;
+            console.log("updatedColumn.tasks:", updatedColumn.tasks);
+            console.log("column.order:", column.order);
+
+            if (updatedColumn.tasks) {
+              updatedColumn.tasks.forEach(updatedTask => {
+                // Find the task by id
+                const task = column.tasks.find(t => t.order === updatedTask.order);
+                if (task) {
+                  // Update task order with the new order
+                  if (updatedTask.order) task.order = updatedTask.order;
+
+                  // if (updatedTask.title) task.title = updatedTask.title;
+                  // if (updatedTask.dueDate) task.dueDate = updatedTask.dueDate;
+                }
+              });
+            }
+          } else {
+            console.error(`Column with order ${updatedColumn.order} not found in project.`);
+          }
+        });
+        // console.log("Project before save:", project);
+        // Save the updated project
+        await project.save();
+        return `Project ${project.title} has been updated`;
+      } catch (err) {
+        console.error("Error updating project columns:", err.message);
+        throw new Error("Failed to update project columns: " + err.message);
+      }
+    },
+
+
+
 
     deleteTask: async (_, { projectId, columnId, taskId }) => {
       const project = await Project.findById(projectId);
@@ -264,27 +289,6 @@ const resolvers = {
       column.tasks.id(taskId).remove();
       await project.save();
       return true;
-    },
-
-    moveTask: async (_, { projectId, taskId, newColumnId, order }) => {
-      const project = await Project.findById(projectId);
-      let task;
-
-      // Find and remove the task from its current column
-      project.columns.forEach((column) => {
-        const foundTask = column.tasks.id(taskId);
-        if (foundTask) {
-          task = foundTask;
-          column.tasks.id(taskId).remove();
-        }
-      });
-
-      // Add the task to the new column
-      const newColumn = project.columns.id(newColumnId);
-      newColumn.tasks.push({ ...task.toObject(), order });
-
-      await project.save();
-      return project;
     },
 
     register: async (_, { username, email, password }, { res }) => {

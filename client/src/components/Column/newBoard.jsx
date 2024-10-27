@@ -17,8 +17,9 @@ import Column from "./index.jsx";
 import { Task } from "../Task/index.jsx";
 import SortableItem from "../Task/index.jsx";
 
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_TASKS } from "../../graphql/queries/projectQueries.jsx";
+import { UPDATE_PROJECT_COLUMNS } from "../../graphql/mutations/columnMutations.js";
 
 const wrapperStyle = {
   display: "flex",
@@ -91,7 +92,7 @@ export default function NewBoard() {
     }));
   };
 
-  const { state } = useStore(); // Assuming you have a ProjectContext
+  const { state } = useStore();
 
   const { loading, error, data } = useQuery(GET_TASKS, {
     variables: {
@@ -121,6 +122,31 @@ export default function NewBoard() {
     }
   }, [data]);
 
+  const [updateProjectColumns] = useMutation(UPDATE_PROJECT_COLUMNS);
+
+  useEffect(() => {
+    if (Object.keys(columns).length === 0) return;
+
+    const formattedColumns = Object.entries(columns).map(
+      ([columnId, column]) => ({
+        order: columnId,
+        tasks: column.tasks.map((task) => ({
+          order: task.order,
+          title: task.title,
+        })),
+      })
+    );
+
+    console.log("Formatted columns:", formattedColumns);
+
+    updateProjectColumns({
+      variables: {
+        projectId: state.projectId,
+        columns: formattedColumns,
+      },
+    }).catch((err) => console.error("Failed to update columns:", err));
+  }, [columns, updateProjectColumns, state.projectId]);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -128,16 +154,7 @@ export default function NewBoard() {
     })
   );
 
-  // function findTaskById(id) {
-  //   for (const column of Object.values(columns)) {
-  //     const task = column.tasks?.find((task) => task.id === id);
-  //     // console.log("findTaskById", task);
-  //     if (task) {
-  //       return task;
-  //     }
-  //   }
-  //   return null;
-  // }
+  console.log(columns);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
