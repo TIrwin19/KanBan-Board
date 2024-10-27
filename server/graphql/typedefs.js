@@ -45,6 +45,20 @@ const typeDefs = gql`
     columns: [Column!]!
   }
 
+  input UpdateColumnInput {
+  # id: ID!
+  # title: String
+  order: String
+  tasks: [UpdateTaskInput!]
+  }
+
+  input UpdateTaskInput {
+  # id: ID!
+  title: String
+  order: String
+  # dueDate: String
+  }   
+
   type AddMemberResponse {
     message: String!
     color: String!
@@ -77,7 +91,7 @@ const typeDefs = gql`
       # user: ID
     ): String!
 
-    updateTasks(projectId: ID!): String!
+    updateProjectColumns(projectId: ID!, columns: [UpdateColumnInput!]!): String!
     
     deleteTask(projectId: ID!, columnId: ID!, taskId: ID!): Boolean!
     moveTask(
