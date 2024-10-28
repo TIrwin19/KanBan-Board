@@ -43,6 +43,7 @@ const typeDefs = gql`
     admin: User!
     members: [User!]!
     columns: [Column!]!
+    createdAt: String!
   }
 
   input UpdateColumnInput {

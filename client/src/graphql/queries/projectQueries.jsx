@@ -8,6 +8,7 @@ export const GET_ADMIN_PROJECT = gql`
       admin {
         username
       }
+      createdAt
     }
   }
 `;

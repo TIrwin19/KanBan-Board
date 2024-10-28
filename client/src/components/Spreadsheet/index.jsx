@@ -15,9 +15,13 @@ import EditModal from "./EditModal";
 import AddModal from "./AddModal";
 import { useAuth } from "../../contexts/AuthContext";
 import { GET_ADMIN_PROJECT } from "./../../graphql/queries/projectQueries";
+import { NavLink } from "react-router-dom";
+import { useStore } from "../../contexts/ProjectContext";
 
 const Spreadsheet = () => {
   const { user } = useAuth();
+  const { setProjectId } = useStore();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -33,7 +37,11 @@ const Spreadsheet = () => {
   });
 
   const projects = data?.getAdminProject || [];
-  console.log(projects);
+  console.log("projects: ", projects);
+
+  const handleViewProject = async (projectId) => {
+    await setProjectId(projectId);
+  };
 
   // ALL MODALS SECTION
   const openModal = (members) => {
@@ -68,6 +76,15 @@ const Spreadsheet = () => {
       setProjectToDelete(null);
     }
     setIsDeleteModalOpen(false);
+  };
+
+  //fixes the createdAt format
+  const formatDate = (timestamp) => {
+    const date = new Date(parseInt(timestamp, 10));
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
   };
 
   // SORTING LOGIC
@@ -125,9 +142,15 @@ const Spreadsheet = () => {
             key={index}
             className="grid grid-cols-1 md:grid-cols-10 border-b border-gray-200 p-2 items-center bg-gray-50 divide-y md:divide-y-0 md:divide-x divide-gray-200"
           >
-            <div className="col-span-2 flex md:items-center md:justify-center">
-              <ExternalLinkIcon className="h-5 w-5 text-gray-600 mr-2" />
-              <span className="text-center w-full">{item.title}</span>
+            <div className="col-span-2">
+              <NavLink
+                to={`/project/${item.id}`}
+                onClick={() => handleViewProject(item.id)}
+                className="flex md:items-center md:justify-center"
+              >
+                <ExternalLinkIcon className="h-5 w-5 text-gray-600 mr-2" />
+                <span className="text-center w-full">{item.title}</span>
+              </NavLink>
             </div>
             <div className="col-span-2 flex md:items-center md:justify-center">
               <div className="flex -space-x-2">
@@ -146,7 +169,7 @@ const Spreadsheet = () => {
               </button>
             </div>
             <div className="md:col-span-1 text-center mt-2 md:mt-0">
-              <span>{item.date || "N/A"}</span>
+              <span>{item.createdAt ? formatDate(item.createdAt) : "N/A"}</span>
             </div>
             <div className="md:col-span-1 text-center">{item.todo || 0}</div>
             <div className="md:col-span-1 text-center">
