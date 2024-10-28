@@ -237,41 +237,43 @@ const resolvers = {
       try {
         // Locate project
         const project = await Project.findById(projectId);
-        // console.log("Project before update:", project);
-        console.log("columns:", columns);
-
         if (!project) throw new Error("Project not found");
 
-        // Update each column's details
+        // console.log("project before update:", project)
+
+        // Iterate through each updated column to move tasks as needed
         columns.forEach(updatedColumn => {
-          // Find the column by order instead of id
-          const column = project.columns.find(c => c.order === updatedColumn.order);
-          if (column) {
-            console.log("Updating column:", column.order);
-            // Update order if needed
-            if (updatedColumn.order) column.order = updatedColumn.order;
-            console.log("updatedColumn.tasks:", updatedColumn.tasks);
-            console.log("column.order:", column.order);
+          const targetColumn = project.columns.find(c => c.order === updatedColumn.order);
+          // console.log("target column:", targetColumn)
 
-            if (updatedColumn.tasks) {
-              updatedColumn.tasks.forEach(updatedTask => {
-                // Find the task by id
-                const task = column.tasks.find(t => t.order === updatedTask.order);
-                if (task) {
-                  // Update task order with the new order
-                  if (updatedTask.order) task.order = updatedTask.order;
+          if (targetColumn && updatedColumn.tasks) {
+            // console.log("updated column:", updatedColumn.tasks)
 
-                  // if (updatedTask.title) task.title = updatedTask.title;
-                  // if (updatedTask.dueDate) task.dueDate = updatedTask.dueDate;
+            updatedColumn.tasks.forEach(updatedTask => {
+              // Locate the task in its original column
+              // console.log("updated task:", updatedTask)
+              const originalColumn = project.columns.find(col =>
+                col.tasks.some(t => t.order.toString() === updatedTask.order)
+              );
+              // console.log("original column:", originalColumn)
+
+              if (originalColumn) {
+
+                const taskIndex = originalColumn.tasks.findIndex(t => t.order.toString() === updatedTask.order);
+                if (taskIndex !== -1) {
+                  // console.log("task index:", taskIndex)
+
+                  // Move the task to the new column if it's different from the original
+                  const [task] = originalColumn.tasks.splice(taskIndex, 1);
+                  targetColumn.tasks.push(task);
                 }
-              });
-            }
+              }
+            });
           } else {
             console.error(`Column with order ${updatedColumn.order} not found in project.`);
           }
         });
-        // console.log("Project before save:", project);
-        // Save the updated project
+        // console.log("project before save:", project)
         await project.save();
         return `Project ${project.title} has been updated`;
       } catch (err) {
@@ -279,9 +281,6 @@ const resolvers = {
         throw new Error("Failed to update project columns: " + err.message);
       }
     },
-
-
-
 
     deleteTask: async (_, { projectId, columnId, taskId }) => {
       const project = await Project.findById(projectId);
