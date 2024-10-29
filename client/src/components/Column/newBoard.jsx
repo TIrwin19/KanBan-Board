@@ -15,7 +15,6 @@ import TaskModal from "../Task/TaskModal.jsx";
 // Import the existing components
 import Column from "./index.jsx";
 import { Task } from "../Task/index.jsx";
-import SortableItem from "../Task/index.jsx";
 
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_TASKS } from "../../graphql/queries/projectQueries.jsx";
@@ -137,7 +136,7 @@ export default function NewBoard() {
       })
     );
 
-    console.log("Formatted columns:", formattedColumns);
+    // console.log("Formatted columns:", formattedColumns);
 
     updateProjectColumns({
       variables: {
@@ -154,7 +153,7 @@ export default function NewBoard() {
     })
   );
 
-  console.log(columns);
+  // console.log(columns);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -169,12 +168,17 @@ export default function NewBoard() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <button
-          onClick={() => setModalOpen(true)}
-          className="h-fit bg-blue-500 p-2 rounded"
-        >
-          Add Task
-        </button>
+        <div className="relative group h-fit">
+          <button
+            onClick={() => setModalOpen(true)}
+            className="h-fit bg-blue-500 text-slate-50 px-2 py-1 rounded-lg text-2xl font-bold"
+          >
+            +
+          </button>
+          <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden rounded-lg bg-gray-50 text-black text-xs py-1 px-2 group-hover:block">
+            Add Task
+          </span>
+        </div>
 
         <TaskModal
           addTask={addTask}
@@ -304,7 +308,7 @@ export default function NewBoard() {
         (key) => columns[key].tasks.length === 0
       );
 
-      console.log("emptyColumn", emptyColumn);
+      // console.log("emptyColumn", emptyColumn);
 
       if (emptyColumn) {
         const task = findTaskById(activeId);

@@ -29,15 +29,14 @@ const Spreadsheet = () => {
   const [projectToDelete, setProjectToDelete] = useState(null);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
+  const [projects, setProjects] = useState([]);
 
   // Fetching projects using GraphQL query
   const { loading, error, data } = useQuery(GET_ADMIN_PROJECT, {
     variables: { adminId: user.id },
     pollInterval: 1000,
+    onCompleted: (data) => setProjects(data?.getAdminProject || []),
   });
-
-  const projects = data?.getAdminProject || [];
-  console.log("projects: ", projects);
 
   const handleViewProject = async (projectId) => {
     await setProjectId(projectId);
@@ -70,15 +69,15 @@ const Spreadsheet = () => {
 
   const confirmDelete = () => {
     if (projectToDelete !== null) {
-      setData((prevData) =>
-        prevData.filter((project) => project.id !== projectToDelete.id)
+      setProjects((prevProjects) =>
+        prevProjects.filter((project) => project.id !== projectToDelete.id)
       );
       setProjectToDelete(null);
     }
     setIsDeleteModalOpen(false);
   };
 
-  //fixes the createdAt format
+  // fixes the createdAt format
   const formatDate = (timestamp) => {
     const date = new Date(parseInt(timestamp, 10));
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -93,15 +92,27 @@ const Spreadsheet = () => {
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
     }
+
     const sortedData = [...projects].sort((a, b) => {
       if (key === "title") {
         return direction === "asc"
           ? a[key].localeCompare(b[key])
           : b[key].localeCompare(a[key]);
+      } else if (key === "createdAt") {
+        return direction === "asc"
+          ? new Date(a[key]) - new Date(b[key])
+          : new Date(b[key]) - new Date(a[key]);
+      } else if (["todo", "inProgress", "done"].includes(key)) {
+        return direction === "asc" ? a[key] - b[key] : b[key] - a[key];
+      } else if (key === "members") {
+        return direction === "asc"
+          ? (a[key]?.length || 0) - (b[key]?.length || 0)
+          : (b[key]?.length || 0) - (a[key]?.length || 0);
       }
       return 0;
     });
 
+    setProjects(sortedData); // Update projects with sorted data
     setSortConfig({ key, direction });
   };
 
@@ -119,6 +130,17 @@ const Spreadsheet = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading projects.</p>;
 
+  const logProjectColumns = () => {
+    projects.forEach((project) => {
+      console.log("Project Columns:", project);
+    });
+  };
+
+  // Call logProjectColumns function when the data is successfully loaded
+  if (!loading && projects.length > 0) {
+    logProjectColumns(); // This will log the columns array of each project to the console
+  }
+
   return (
     <div className="text-[#363636] p-4 flex flex-col">
       <div className="hidden md:grid grid-cols-10 bg-gray-100 p-2 rounded-t-lg border-b border-gray-300 divide-x divide-gray-300">
@@ -128,14 +150,38 @@ const Spreadsheet = () => {
         >
           Title {renderSortIcon("title")}
         </div>
-        <div className="col-span-2 font-bold text-center">Members</div>
-        <div className="col-span-1 font-bold text-center">Date Created</div>
-        <div className="col-span-1 font-bold text-center">To-Do</div>
-        <div className="col-span-1 font-bold text-center">In-Progress</div>
-        <div className="col-span-1 font-bold text-center">Done</div>
+        <div
+          className="col-span-2 font-bold text-center cursor-pointer"
+          onClick={() => sortData("members")}
+        >
+          Members {renderSortIcon("members")}
+        </div>
+        <div
+          className="col-span-1 font-bold text-center cursor-pointer"
+          onClick={() => sortData("createdAt")}
+        >
+          Date Created {renderSortIcon("createdAt")}
+        </div>
+        <div
+          className="col-span-1 font-bold text-center cursor-pointer"
+          onClick={() => sortData("todo")}
+        >
+          To-Do {renderSortIcon("todo")}
+        </div>
+        <div
+          className="col-span-1 font-bold text-center cursor-pointer"
+          onClick={() => sortData("inProgress")}
+        >
+          In-Progress {renderSortIcon("inProgress")}
+        </div>
+        <div
+          className="col-span-1 font-bold text-center cursor-pointer"
+          onClick={() => sortData("done")}
+        >
+          Done {renderSortIcon("done")}
+        </div>
         <div className="col-span-2 font-bold text-center">Action</div>
       </div>
-
       <div className="overflow-y-auto h-full">
         {projects.map((item, index) => (
           <div
@@ -178,22 +224,22 @@ const Spreadsheet = () => {
             <div className="md:col-span-1 text-center">{item.done || 0}</div>
             <div className="md:col-span-2 flex justify-center space-x-2 mt-2 md:mt-0">
               <button
-                className="bg-blue-200 px-2 py-1 rounded-md text-sm"
-                onClick={() => openEditModal()}
+                className="bg-blue-200 px-2 py-1 rounded-md text-blue-800"
+                onClick={openEditModal}
               >
-                <PencilAltIcon className="h-4 w-4" />
+                <PencilAltIcon className="h-5 w-5 inline" />
               </button>
               <button
-                className="bg-green-200 px-2 py-1 rounded-md text-sm"
-                onClick={() => openAddModal()}
+                className="bg-green-200 px-2 py-1 rounded-md text-green-800"
+                onClick={openAddModal}
               >
-                <PlusCircleIcon className="h-4 w-4" />
+                <PlusCircleIcon className="h-5 w-5 inline" />
               </button>
               <button
-                className="bg-red-200 px-2 py-1 rounded-md text-sm"
+                className="bg-red-200 px-2 py-1 rounded-md text-red-800"
                 onClick={() => toggleDeleteModal(item)}
               >
-                <TrashIcon className="h-4 w-4" />
+                <TrashIcon className="h-5 w-5 inline" />
               </button>
             </div>
           </div>
