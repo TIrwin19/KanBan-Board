@@ -54,6 +54,16 @@ const resolvers = {
       }
     },
 
+    // Get Project Title
+    getProject: async (_, { projectId }) => {
+      if (!projectId) throw new Error("No project ID provided")
+      const project = await Project.findById(projectId)
+
+      if (!project) throw new Error("No project by that ID exists")
+
+      return project
+    },
+
     // Get Admin Projects
     getAdminProject: async (_, { adminId }) => {
       if (!adminId) throw new Error("No admin provided.");

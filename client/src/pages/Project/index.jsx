@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import NewBoard from "../../components/Column/newBoard.jsx";
-import Board from "../../components/Column/Board.jsx";
 
 import AddMembers from "../../components/AddMembers/index.jsx";
 
@@ -18,7 +17,7 @@ const Project = () => {
   return (
     <>
       <AddMembers />
-      {/* <Board /> */}
+
       <NewBoard />
     </>
   );

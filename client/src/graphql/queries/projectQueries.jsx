@@ -38,3 +38,11 @@ export const GET_TASKS = gql`
     }
   }
 `;
+
+export const GET_PROJECT = gql`
+  query GetProject($projectId: ID!) {
+    getProject(projectId: $projectId) {
+      title
+    }
+  }
+`;

@@ -67,6 +67,7 @@ const typeDefs = gql`
 
   type Query {
     getUser: User!
+    getProject(projectId: ID!): Project!
     getAdminProject(adminId: ID!): [Project!]!
     getJoinedProject(userId: ID!): [Project!]!
     getUserAvatar(userId: ID!): String!
