@@ -7,6 +7,7 @@ export const GET_ADMIN_PROJECT = gql`
       title
       admin {
         username
+        id
       }
       createdAt
     }
@@ -43,6 +44,9 @@ export const GET_PROJECT = gql`
   query GetProject($projectId: ID!) {
     getProject(projectId: $projectId) {
       title
+      admin {
+        id
+      }
     }
   }
 `;

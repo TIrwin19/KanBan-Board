@@ -2,7 +2,22 @@ import { CREATE_PROJECT } from "../../graphql/mutations/projectMutations";
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useMutation } from "@apollo/client";
-import { PlusIcon } from "@heroicons/react/outline"; 
+import { PlusIcon } from "@heroicons/react/outline";
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  viewBox="0 0 24 24"
+  strokeWidth={1.5}
+  stroke="currentColor"
+  className="size-6"
+>
+  <path
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    d="M12 4.5v15m7.5-7.5h-15"
+  />
+</svg>;
 
 const Welcome3 = () => {
   const { user } = useAuth();
@@ -11,7 +26,7 @@ const Welcome3 = () => {
 
   const [createProject] = useMutation(CREATE_PROJECT, {
     onCompleted: (data) => {
-      console.log("Project created", data);
+      // console.log("Project created", data);
       setIsCreating(false);
       setProjectName("");
     },
@@ -55,7 +70,7 @@ const Welcome3 = () => {
           onClick={handleCreateProjectClick}
           className="flex items-center gap-2 bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition-all duration-300 ease-in-out"
         >
-          <PlusIcon className="h-5 w-5" /> 
+          <PlusIcon className="h-5 w-5" />
           Create Project
         </button>
       )}

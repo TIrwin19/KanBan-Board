@@ -1,19 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
+import DeleteTask from "../Delete/DeleteTask";
 
 export function Task({ task }) {
+  const [taskColor, setTaskColor] = useState("");
+
+  const getTaskColor = (dueDate, columnId) => {
+    const currentDate = new Date();
+    const dueDateObj = new Date(dueDate);
+    const timeDiff = dueDateObj - currentDate;
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    if (columnId === "column3") {
+      return "bg-white";
+    } else if (daysDiff <= 1) {
+      return "border-4 border-red-500 bg-white";
+    } else if (daysDiff <= 3) {
+      return "border-4 border-yellow-500 bg-white";
+    } else if (daysDiff <= 7) {
+      return "bg-white";
+    }
+  };
+
+  useEffect(() => {
+    setTaskColor(getTaskColor(task?.dueDate, task?.columnId));
+  }, [task?.dueDate, task?.columnId]);
+
   return (
-    <div className="draggable bg-white p-4 rounded-lg shadow-md">
-      <h3 className="font-bold">{task?.title}</h3>
-      <p className="text-sm text-gray-600">{task?.dueDate}</p>
+    <div
+      className={`${taskColor} draggable p-4 rounded-lg shadow-md flex justify-between relative`}
+    >
+      <div>
+        <h3 className="font-bold">{task?.title}</h3>
+        <p className="text-sm text-gray-600">{task?.dueDate}</p>
+      </div>
+      <DeleteTask taskOrder={task.order} columnOrder={task.columnId} />
     </div>
   );
 }
 
 export default function SortableItem(props) {
-  const { id, task } = props;
+  const { id, task, columnId } = props;
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -24,7 +53,7 @@ export default function SortableItem(props) {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <Task task={task} />
+      <Task task={{ ...task, columnId }} />
     </div>
   );
 }

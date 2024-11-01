@@ -13,12 +13,6 @@ export const CREATE_PROJECT = gql`
   }
 `;
 
-export const DELETE_PROJECT = gql`
-  mutation DeleteProject($projectId: ID!) {
-    deleteProject(projectId: $projectId)
-  }
-`;
-
 export const ADD_MEMBERS = gql`
   mutation AddMembers($projectId: ID!, $adminId: ID!, $userEmail: String!) {
   addMembers(projectId: $projectId, adminId: $adminId, userEmail: $userEmail){
@@ -26,4 +20,10 @@ export const ADD_MEMBERS = gql`
     message
   }
 }
+`
+
+export const DELETE_PROJECT = gql`
+  mutation DeleteProject($projectId: ID!, $adminId: ID!) {
+    deleteProject(projectId: $projectId, adminId: $adminId)
+  }
 `

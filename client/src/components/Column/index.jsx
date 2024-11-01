@@ -34,6 +34,7 @@ const Column = (props) => {
                   key={`${task.order}-${index}`}
                   task={task}
                   id={task.order}
+                  columnId={columnId}
                 />
               ) : null
             )

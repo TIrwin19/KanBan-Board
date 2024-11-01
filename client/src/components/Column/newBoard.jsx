@@ -19,6 +19,7 @@ import { Task } from "../Task/index.jsx";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_TASKS } from "../../graphql/queries/projectQueries.jsx";
 import { UPDATE_PROJECT_COLUMNS } from "../../graphql/mutations/columnMutations.js";
+import { PlusIcon } from "@heroicons/react/outline";
 
 const wrapperStyle = {
   display: "flex",
@@ -171,9 +172,9 @@ export default function NewBoard() {
         <div className="relative group h-fit">
           <button
             onClick={() => setModalOpen(true)}
-            className="h-fit bg-blue-500 text-slate-50 px-2 py-1 rounded-lg text-2xl font-bold"
+            className="h-fit bg-blue-500 text-slate-50 p-1 rounded-lg text-2xl font-bold"
           >
-            +
+            <PlusIcon className="h-6 w-6" />
           </button>
           <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden rounded-lg bg-gray-50 text-black text-xs py-1 px-2 group-hover:block">
             Add Task

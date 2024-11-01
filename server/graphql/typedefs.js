@@ -1,5 +1,3 @@
-//NEED REVIEW, NOT DONE
-
 const gql = String.raw
 
 const typeDefs = gql`
@@ -76,12 +74,12 @@ const typeDefs = gql`
 
   type Mutation {
     createProject(title: String!, admin: ID!): Project!
-    deleteProject(projectId: ID!): Boolean!
+    deleteProject(projectId: ID!, adminId: ID!): Boolean!
     addMembers(projectId: ID!, adminId: ID!, userEmail: String!): AddMemberResponse!
 
     createColumn(projectId: ID!, title: String!, order: String!): Column!
-    deleteColumn(projectId: ID!, columnId: ID!): Boolean!
-    updateColumnOrder(projectId: ID!, columnId: ID!, newOrder: Int!): Project!
+    # deleteColumn(projectId: ID!, columnId: ID!): Boolean!
+    # updateColumnOrder(projectId: ID!, columnId: ID!, newOrder: Int!): Project!
 
     createTask(
       projectId: ID!
@@ -95,7 +93,7 @@ const typeDefs = gql`
 
     updateProjectColumns(projectId: ID!, columns: [UpdateColumnInput!]!): String!
     
-    deleteTask(projectId: ID!, columnId: ID!, taskId: ID!): Boolean!
+    deleteTask(projectId: ID!, columnOrder: String!, taskOrder: String!): Boolean!
     moveTask(
       projectId: ID!
       taskId: ID!
