@@ -58,6 +58,7 @@ const resolvers = {
     getProject: async (_, { projectId }) => {
       if (!projectId) throw new Error("No project ID provided")
       const project = await Project.findById(projectId)
+        .populate("admin")
 
       if (!project) throw new Error("No project by that ID exists")
 
@@ -149,6 +150,19 @@ const resolvers = {
       }
     },
 
+    deleteProject: async (_, { projectId, adminId }) => {
+      if (!projectId || !adminId) throw new Error("Project ID and or Admin ID not provided")
+
+      const project = await Project.findById(projectId)
+      if (!project) throw new Error("Project does not exist")
+
+      const admin = project.admin.toString()
+      if (admin !== adminId) throw new Error("You are not the admin of this Project")
+
+      await project.deleteOne()
+      return true
+    },
+
     addMembers: async (_, { projectId, adminId, userEmail }) => {
       //If no admin id is present don't procede
       if (!adminId) throw new Error("Admin ID not provided.")
@@ -184,28 +198,22 @@ const resolvers = {
           color: "green"
         }
       }
-
-      //Add the member to the project
-      project.members.push(member._id)
-      await project.save()//Save the updated project
-
-      return `${member.username} has been added to ${project.title}`
     },
 
-    createColumn: async (_, { projectId, title, order }) => {
-      const project = await Project.findById(projectId);
-      const column = { title, order, tasks: [] };
-      project.columns.push(column);
-      await project.save();
-      return column;
-    },
+    // createColumn: async (_, { projectId, title, order }) => {
+    //   const project = await Project.findById(projectId);
+    //   const column = { title, order, tasks: [] };
+    //   project.columns.push(column);
+    //   await project.save();
+    //   return column;
+    // },
 
-    deleteColumn: async (_, { projectId, columnId }) => {
-      const project = await Project.findById(projectId);
-      project.columns.id(columnId).remove();
-      await project.save();
-      return true;
-    },
+    // deleteColumn: async (_, { projectId, columnId }) => {
+    //   const project = await Project.findById(projectId);
+    //   project.columns.id(columnId).remove();
+    //   await project.save();
+    //   return true;
+    // },
 
     createTask: async (_, { projectId, columnId, title, order, dueDate }) => {
       try {
@@ -292,11 +300,18 @@ const resolvers = {
       }
     },
 
-    deleteTask: async (_, { projectId, columnId, taskId }) => {
+    deleteTask: async (_, { projectId, columOrder, taskOrder }) => {
+      if (!projectId || !columOrder || !taskOrder) throw new Error("Prpper credentials not provided")
       const project = await Project.findById(projectId);
-      const column = project.columns.id(columnId);
-      column.tasks.id(taskId).remove();
-      await project.save();
+      console.log("project:", project)
+      if (!project) throw new Error("Project does not exist")
+      const column = project.columns.order(columnOrder);
+      console.log("column:", column)
+      if (!column) throw new Error("Column does not exist")
+      const task = column.tasks.order(taskOrder)
+      console.log("task:", task)
+      if (!task) throw new Error("Task does not exist")
+      await task.deleteOne()
       return true;
     },
 

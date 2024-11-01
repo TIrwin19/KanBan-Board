@@ -6,6 +6,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { NavLink } from "react-router-dom";
 import { useStore } from "../../contexts/ProjectContext";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
+import DeleteProject from "../Delete/DeleteProject";
 
 const ProjectCard = () => {
   const { user } = useAuth();
@@ -66,11 +67,14 @@ const ProjectCard = () => {
         {cards.map((card, index) => (
           <div
             key={index}
-            className="flex flex-col p-4  border rounded-lg shadow bg-gray-800 border-gray-700 min-h-[250px] max-h-[250px] min-w-[200px] max-w-[200px]"
+            className="flex flex-col p-4 border rounded-lg shadow bg-gray-800 border-gray-700 min-h-[250px] max-h-[250px] min-w-[200px] max-w-[200px]"
           >
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              {card.title}
-            </h5>
+            <div className="flex items-center justify-between">
+              <h5 className="mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                {card.title}
+              </h5>
+              <DeleteProject admin={card.admin.id} projectId={card.id} />
+            </div>
             <p className="flex-grow mb-3 font-normal text-gray-700 dark:text-gray-400 break-words">
               {/* {card.description} */}
               description

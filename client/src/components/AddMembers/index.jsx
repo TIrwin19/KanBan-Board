@@ -45,7 +45,7 @@ const AddMembers = () => {
     e.preventDefault();
     try {
       const { data } = await addMembers(); // Await the mutation and capture response
-      console.log("Color from resolver:", data.addMembers.color); // Debug
+      // console.log("Color from resolver:", data.addMembers.color); // Debug
       setMessage(data.addMembers.message); // Set success message
       setMessageColor(getMessageColorClass(data.addMembers.color)); // Map to valid class
       setFormData({ email: "" }); // Clear input field after success
@@ -55,17 +55,22 @@ const AddMembers = () => {
     }
   };
 
+  // function capitalizeEachWord(string) {
+  //   return string
+  //     .split(" ")
+  //     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+  //     .join(" ");
+  // }
+
+  const title = data?.getProject.title;
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
   return (
     <>
       <div className="flex justify-between items-center">
-        {data && (
-          <h1 className="text-slate-50 text-xl font-bold">
-            {data.getProject.title.toUpperCase()}
-          </h1>
-        )}
+        {data && <h1 className="text-slate-50 text-xl font-bold">{title}</h1>}
         <div>
           <form onSubmit={handleAction} className="flex items-end mb-4">
             <label className="text-gray-700">
