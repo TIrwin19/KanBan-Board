@@ -13,14 +13,16 @@ export function Task({ task }) {
     const timeDiff = dueDateObj - currentDate;
     const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
+    console.log("columnOrder:", task?.columnId);
+
     if (columnId === "column3") {
-      return "bg-white";
+      return "bg-white border-4 border-white";
     } else if (daysDiff <= 1) {
       return "border-4 border-red-500 bg-white";
     } else if (daysDiff <= 3) {
       return "border-4 border-yellow-500 bg-white";
-    } else if (daysDiff <= 7) {
-      return "bg-white";
+    } else if (daysDiff > 7) {
+      return "bg-white border-4 border-white";
     }
   };
 
@@ -30,13 +32,10 @@ export function Task({ task }) {
 
   return (
     <div
-      className={`${taskColor} draggable p-4 rounded-lg shadow-md flex justify-between relative`}
+      className={`${taskColor} draggable p-4 rounded-lg shadow-md flex justify-between `}
     >
-      <div>
-        <h3 className="font-bold">{task?.title}</h3>
-        <p className="text-sm text-gray-600">{task?.dueDate}</p>
-      </div>
-      <DeleteTask taskOrder={task.order} columnOrder={task.columnId} />
+      <h3 className="font-bold">{task?.title}</h3>
+      <p className="text-sm text-gray-600">{task?.dueDate}</p>
     </div>
   );
 }

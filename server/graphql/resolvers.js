@@ -300,20 +300,52 @@ const resolvers = {
       }
     },
 
-    deleteTask: async (_, { projectId, columOrder, taskOrder }) => {
-      if (!projectId || !columOrder || !taskOrder) throw new Error("Prpper credentials not provided")
-      const project = await Project.findById(projectId);
-      console.log("project:", project)
-      if (!project) throw new Error("Project does not exist")
-      const column = project.columns.order(columnOrder);
-      console.log("column:", column)
-      if (!column) throw new Error("Column does not exist")
-      const task = column.tasks.order(taskOrder)
-      console.log("task:", task)
-      if (!task) throw new Error("Task does not exist")
-      await task.deleteOne()
-      return true;
+    deleteTasks: async (_, { projectId, taskIds }) => {
+      try {
+        // Find the project by projectId
+        const project = await Project.findById(projectId);
+        if (!project) {
+          throw new Error("Project not found");
+        }
+
+        // Flag to track if any task was found and removed
+        let tasksRemoved = false;
+
+        // Iterate over columns to find and remove tasks by taskIds
+        project.columns.forEach((column) => {
+          const initialTaskCount = column.tasks.length;
+
+          // Filter out tasks that have an id in the taskIds array
+          column.tasks = column.tasks.filter(
+            (task) => !taskIds.includes(task._id.toString())
+          );
+
+          // Check if tasks were removed from this column
+          if (column.tasks.length < initialTaskCount) {
+            tasksRemoved = true;
+          }
+        });
+
+        // If no tasks were found, return an error
+        if (!tasksRemoved) {
+          throw new Error("No tasks found with the provided IDs");
+        }
+
+        // Save the updated project with tasks removed
+        await project.save();
+
+        return {
+          success: true,
+          message: "Tasks deleted successfully",
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
     },
+
 
     register: async (_, { username, email, password }, { res }) => {
       const existingUser = await User.findOne({ email });
