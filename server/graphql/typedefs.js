@@ -93,7 +93,7 @@ const typeDefs = gql`
 
     updateProjectColumns(projectId: ID!, columns: [UpdateColumnInput!]!): String!
     
-    deleteTask(projectId: ID!, columnOrder: String!, taskOrder: String!): Boolean!
+    deleteTasks(projectId: ID!, taskIds: [ID!]!): String!
     moveTask(
       projectId: ID!
       taskId: ID!

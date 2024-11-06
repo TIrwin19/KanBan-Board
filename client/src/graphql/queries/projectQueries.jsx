@@ -47,6 +47,15 @@ export const GET_PROJECT = gql`
       admin {
         id
       }
+      columns {
+        order
+        tasks {
+          id
+          title
+          order
+          dueDate
+        }
+      }
     }
   }
 `;

@@ -18,9 +18,9 @@ export const CREATE_TASK = gql`
   }
 `;
 
-export const DELETE_TASK = gql`
-  mutation DeleteTask($projectId: ID!, $columnOrder: String!, $taskOrder: String!) {
-  deleteTask(projectId: $projectId, columnOrder: $columnOrder, taskOrder: $taskOrder)
+export const DELETE_TASKS = gql`
+  mutation DeleteTasks($projectId: ID!, $taskIds: [ID!]!) {
+  deleteTasks(projectId: $projectId, taskIds: $taskIds)
 }
 `;
 
