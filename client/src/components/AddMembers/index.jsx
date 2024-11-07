@@ -63,6 +63,8 @@ const AddMembers = () => {
   // }
 
   const title = data?.getProject.title;
+  const currentUser = user.id;
+  const projectAdmin = data?.getProject.admin.id;
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -70,8 +72,10 @@ const AddMembers = () => {
   return (
     <>
       <div className="flex justify-between items-center">
-        {data && <h1 className="text-slate-50 text-xl font-bold">{title}</h1>}
-        <div>
+        {data && (
+          <h1 className="text-slate-50 text-xl font-bold mb-4">{title}</h1>
+        )}
+        {currentUser === projectAdmin && (
           <form onSubmit={handleAction} className="flex items-end mb-4">
             <label className="text-gray-700">
               <span className="text-[#D2BAC3] text-xs">Add a member</span>
@@ -89,12 +93,12 @@ const AddMembers = () => {
               Submit
             </button>
           </form>
-          {message && (
-            <div className={`${messageColor} mb-2`}>
-              <p>{message}</p>
-            </div>
-          )}
-        </div>
+        )}
+        {message && (
+          <div className={`${messageColor} mb-2`}>
+            <p>{message}</p>
+          </div>
+        )}
       </div>
     </>
   );

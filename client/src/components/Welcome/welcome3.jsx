@@ -68,7 +68,7 @@ const Welcome3 = () => {
       ) : (
         <button
           onClick={handleCreateProjectClick}
-          className="flex items-center gap-2 bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition-all duration-300 ease-in-out"
+          className="flex items-center gap-2 bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition-all duration-300 ease-in-out w-fit"
         >
           <PlusIcon className="h-5 w-5" />
           Create Project

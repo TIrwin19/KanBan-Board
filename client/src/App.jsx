@@ -4,6 +4,7 @@ import ProjectPage from "./graphql/ProjectPage";
 // import KanbanBoard from "./pages/test";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
+import Dashboardnew from "./pages/Dashboard/newDashboard.jsx";
 import ProtectedRoute from "./protectedRoutes";
 import { useAuth } from "./contexts/AuthContext";
 import { useMutation } from "@apollo/client";
@@ -26,7 +27,8 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              {/* <Dashboard /> */}
+              <Dashboardnew />
             </ProtectedRoute>
           }
         />
