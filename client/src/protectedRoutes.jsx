@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth(); // Get authentication status and loading state
 
   // While authentication is being fetched, show a loading spinner or null
-  if (loading) {
+  if (isAuthenticated() === null) {
     return <div>Loading...</div>; // Or show a spinner/loader component
   }
 

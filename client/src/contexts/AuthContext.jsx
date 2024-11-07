@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
 
   // Check if the user is authenticated by verifying the user state
   const isAuthenticated = () => {
-    if (loadingState) return false; // Return false if still loading
+    if (loadingState) return null; // Return false if still loading
     return !!user; // Return true if user exists, false otherwise
   };
 

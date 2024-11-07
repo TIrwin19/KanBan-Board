@@ -10,17 +10,19 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useStore } from "../../contexts/ProjectContext.jsx";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 import TaskModal from "../Task/TaskModal.jsx";
 import DeleteTaskModal from "../Delete/DeleteTaskModal.jsx";
-
-// Import the existing components
 import Column from "./index.jsx";
 import { Task } from "../Task/index.jsx";
-
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_TASKS } from "../../graphql/queries/projectQueries.jsx";
+import {
+  GET_TASKS,
+  GET_PROJECT,
+} from "../../graphql/queries/projectQueries.jsx";
 import { UPDATE_PROJECT_COLUMNS } from "../../graphql/mutations/columnMutations.js";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
+import { NavLink } from "react-router-dom";
 
 const wrapperStyle = {
   display: "flex",
@@ -95,17 +97,36 @@ export default function NewBoard() {
   };
 
   const { state } = useStore();
+  const { user } = useAuth();
 
-  const { loading, error, data } = useQuery(GET_TASKS, {
+  const currentUser = user.id;
+
+  const {
+    loading: loadingTasks,
+    error: errorTasks,
+    data: tasksData,
+  } = useQuery(GET_TASKS, {
     variables: {
       projectId: state.projectId,
     },
     pollInterval: 1000,
   });
 
+  const {
+    loading: loadingProject,
+    error: errorProject,
+    data: projectData,
+  } = useQuery(GET_PROJECT, {
+    variables: {
+      projectId: state.projectId,
+    },
+  });
+
+  const projectAdmin = projectData?.getProject.admin.id;
+
   useEffect(() => {
-    if (data) {
-      const tasks = data.getTasks;
+    if (tasksData) {
+      const tasks = tasksData.getTasks;
 
       setColumns((prevColumns) => {
         const updatedColumns = { ...prevColumns };
@@ -122,7 +143,7 @@ export default function NewBoard() {
         return updatedColumns;
       });
     }
-  }, [data]);
+  }, [tasksData]);
 
   const [updateProjectColumns] = useMutation(UPDATE_PROJECT_COLUMNS);
 
@@ -158,8 +179,11 @@ export default function NewBoard() {
 
   // console.log(columns);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loadingTasks) return <p>Loading...</p>;
+  if (errorTasks) return <p>Error: {error.message}</p>;
+
+  if (loadingProject) return <p>Loading...</p>;
+  if (errorProject) return <p>Error: {error.message}</p>;
 
   return (
     <div className="flex space-x-4">
@@ -172,27 +196,52 @@ export default function NewBoard() {
         onDragEnd={handleDragEnd}
       >
         <div className="flex flex-col">
-          <div className="relative group h-fit">
-            <button
-              onClick={() => setModalOpen(true)}
-              className="h-fit bg-blue-500 text-slate-50 p-1 rounded-lg text-2xl font-bold"
-            >
-              <PlusIcon className="h-6 w-6" />
-            </button>
-            <span className="absolute z-10 left-1/2 -translate-x-1/2 top-full mt-2 hidden rounded-lg bg-gray-50 text-black text-xs py-1 px-2 group-hover:block">
-              Add Task
-            </span>
-          </div>
+          {currentUser === projectAdmin && (
+            <div className="flex flex-col">
+              <div className="relative group h-fit">
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="h-fit bg-blue-500 text-slate-50 p-1 rounded-lg text-2xl font-bold"
+                >
+                  <PlusIcon className="h-6 w-6" />
+                </button>
+                <span className="absolute z-10 left-1/2 -translate-x-1/2 top-full mt-2 hidden rounded-lg bg-gray-50 text-black text-xs py-1 px-2 group-hover:block">
+                  Add Task
+                </span>
+              </div>
 
+              <div className="mt-1 relative group h-fit">
+                <button
+                  onClick={() => setDeleteModalOpen(true)}
+                  className="h-fit bg-red-500 text-slate-50 p-1 rounded-lg text-2xl font-bold"
+                >
+                  <TrashIcon className="h-6 w-6" />
+                </button>
+                <span className="absolute z-10 left-1/2 -translate-x-1/2 top-full mt-2 hidden rounded-lg bg-gray-50 text-black text-xs py-1 px-2 group-hover:block">
+                  Delete Task
+                </span>
+              </div>
+            </div>
+          )}
           <div className="mt-1 relative group h-fit">
-            <button
-              onClick={() => setDeleteModalOpen(true)}
-              className="h-fit bg-red-500 text-slate-50 p-1 rounded-lg text-2xl font-bold"
-            >
-              <TrashIcon className="h-6 w-6" />
-            </button>
+            <NavLink to={"/dashboard"}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="h-8 w-8 text-slate-50 bg-green-500 p-1 rounded-lg text-2xl font-bold"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                />
+              </svg>
+            </NavLink>
             <span className="absolute z-10 left-1/2 -translate-x-1/2 top-full mt-2 hidden rounded-lg bg-gray-50 text-black text-xs py-1 px-2 group-hover:block">
-              Delete Task
+              Dashboard
             </span>
           </div>
         </div>

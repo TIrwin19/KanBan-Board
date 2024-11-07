@@ -33,6 +33,9 @@ const TaskModal = ({ columns, isOpen, setIsOpen }) => {
         projectId: state.projectId,
       },
     });
+    setTitle("");
+    setDueDate("");
+    setSelectedColumnId(columns[0]?.id || "");
   };
 
   if (!isOpen) return null;
@@ -46,6 +49,7 @@ const TaskModal = ({ columns, isOpen, setIsOpen }) => {
               Title:
               <input
                 type="text"
+                placeholder="Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
