@@ -5,9 +5,20 @@ export const GET_ADMIN_PROJECT = gql`
     getAdminProject(adminId: $adminId) {
       id
       title
+      columns {
+        title
+        tasks {
+          order
+        }
+      }
       admin {
         username
         id
+      }
+      members {
+        id
+        username
+        avatar
       }
       createdAt
     }

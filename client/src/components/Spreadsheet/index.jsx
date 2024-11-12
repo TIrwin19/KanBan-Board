@@ -38,6 +38,8 @@ const Spreadsheet = () => {
     onCompleted: (data) => setProjects(data?.getAdminProject || []),
   });
 
+  console.log("Projects", projects);
+
   const handleViewProject = async (projectId) => {
     await setProjectId(projectId);
   };
@@ -130,16 +132,16 @@ const Spreadsheet = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading projects.</p>;
 
-  const logProjectColumns = () => {
-    projects.forEach((project) => {
-      console.log("Project Columns:", project);
-    });
-  };
+  // const logProjectColumns = () => {
+  //   projects.forEach((project) => {
+  //     console.log("Project Columns:", project);
+  //   });
+  // };
 
   // Call logProjectColumns function when the data is successfully loaded
-  if (!loading && projects.length > 0) {
-    logProjectColumns(); // This will log the columns array of each project to the console
-  }
+  // if (!loading && projects.length > 0) {
+  //   logProjectColumns(); // This will log the columns array of each project to the console
+  // }
 
   return (
     <div className="text-[#363636] p-4 flex flex-col">
@@ -195,7 +197,9 @@ const Spreadsheet = () => {
                 className="flex md:items-center md:justify-center"
               >
                 <ExternalLinkIcon className="h-5 w-5 text-gray-600 mr-2" />
-                <span className="text-center w-full">{item.title}</span>
+                <span className="text-center w-full hover:text-black hover:font-bold">
+                  {item.title}
+                </span>
               </NavLink>
             </div>
             <div className="col-span-2 flex md:items-center md:justify-center">
@@ -203,8 +207,8 @@ const Spreadsheet = () => {
                 {item.members?.map((member, i) => (
                   <img
                     key={i}
-                    className="w-8 h-8 border-2 border-white rounded-full"
-                    src={member.avatarUrl}
+                    className="w-8 h-8 border border-gray-600 rounded-full"
+                    src={member.avatar}
                     alt={member.name}
                     title={member.name}
                   />
@@ -217,11 +221,16 @@ const Spreadsheet = () => {
             <div className="md:col-span-1 text-center mt-2 md:mt-0">
               <span>{item.createdAt ? formatDate(item.createdAt) : "N/A"}</span>
             </div>
-            <div className="md:col-span-1 text-center">{item.todo || 0}</div>
-            <div className="md:col-span-1 text-center">
-              {item.inProgress || 0}
-            </div>
-            <div className="md:col-span-1 text-center">{item.done || 0}</div>
+
+            {item.columns.map((column) => (
+              <div
+                key={column._id}
+                className="md:col-span-1 text-center mt-2 md:mt-0"
+              >
+                <p>{column.tasks.length}</p>
+              </div>
+            ))}
+
             <div className="md:col-span-2 flex justify-center space-x-2 mt-2 md:mt-0">
               <button
                 className="bg-blue-200 px-2 py-1 rounded-md text-blue-800"
