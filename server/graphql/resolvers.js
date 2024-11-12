@@ -71,7 +71,10 @@ const resolvers = {
 
       const currentAdminProjects = await Project.find({
         admin: adminId,
-      }).populate("admin");
+      })
+        .populate("admin")
+        .populate("members")
+        .populate("columns")
 
       return currentAdminProjects;
     },
@@ -345,7 +348,6 @@ const resolvers = {
         };
       }
     },
-
 
     register: async (_, { username, email, password }, { res }) => {
       const existingUser = await User.findOne({ email });

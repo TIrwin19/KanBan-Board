@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_PROJECT } from "../../graphql/queries/projectQueries";
 import { useStore } from "../../contexts/ProjectContext";
@@ -8,6 +8,7 @@ const DeleteTaskModal = ({ isOpen, setIsOpen }) => {
   const { state } = useStore();
   const projectId = state.projectId;
   const [selectedTasks, setSelectedTasks] = useState([]);
+  const modalRef = useRef(null); // Reference for the modal content
 
   const { loading, error, data } = useQuery(GET_PROJECT, {
     variables: { projectId },
@@ -19,8 +20,22 @@ const DeleteTaskModal = ({ isOpen, setIsOpen }) => {
   });
 
   useEffect(() => {
-    console.log("Selected tasks updated:", selectedTasks);
-  }, [selectedTasks]);
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsOpen(false); // Close modal if click is outside
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, setIsOpen]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -29,15 +44,12 @@ const DeleteTaskModal = ({ isOpen, setIsOpen }) => {
   const allTasks = columns.flatMap((column) =>
     column.tasks.map((task) => ({ ...task, columnId: column._id }))
   );
-  console.log("All Tasks:", allTasks);
 
-  // Toggle selected task IDs in selectedTasks array
   const handleCheckboxChange = (taskId) => {
-    setSelectedTasks(
-      (prevSelectedTasks) =>
-        prevSelectedTasks.includes(taskId)
-          ? prevSelectedTasks.filter((id) => id !== taskId) // Uncheck
-          : [...prevSelectedTasks, taskId] // Check
+    setSelectedTasks((prevSelectedTasks) =>
+      prevSelectedTasks.includes(taskId)
+        ? prevSelectedTasks.filter((id) => id !== taskId)
+        : [...prevSelectedTasks, taskId]
     );
   };
 
@@ -55,12 +67,15 @@ const DeleteTaskModal = ({ isOpen, setIsOpen }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <div
+        ref={modalRef}
+        className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md"
+      >
         <div>
           {allTasks.length > 0 ? (
             allTasks.map((task) => (
               <div
-                key={task.id} // Ensure this key is unique for each task
+                key={task.id}
                 className="flex justify-between items-center border-t-2"
               >
                 <input

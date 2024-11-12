@@ -14,15 +14,15 @@ const MemberModal = ({ isOpen, onClose, members, onAddMember }) => {
         </button>
         <h3 className="text-xl font-bold mb-4">Project Members</h3>
 
-        <div className="space-y-4">
+        <div className="grid grid-cols-5">
           {members.map((member, index) => (
-            <div key={index} className="flex items-center space-x-3">
+            <div key={index} className="space-x-3 flex flex-col justify-center">
               <img
-                className="w-8 h-8 border-2 border-white rounded-full"
-                src={member.avatarUrl}
-                alt={member.name}
+                className="w-14 h-14 border-2 border-gray-600 rounded-full"
+                src={member.avatar}
+                alt={member.username}
               />
-              <div>{member.name}</div>
+              <div className="text-black">{member.username}</div>
             </div>
           ))}
         </div>
