@@ -12,13 +12,11 @@ const ProjectList = () => {
   const navigate = useNavigate();
   const [logoutMutation] = useMutation(LOGOUT);
 
-
   const handleLogout = async () => {
     logout();
     await logoutMutation();
     navigate("/");
   };
-
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -27,7 +25,9 @@ const ProjectList = () => {
   return (
     <div className="text-[#363636] p-4 flex flex-col bg-gray-50">
       <div className="flex justify-between items-center bg-gray-100 p-4 rounded-t-lg border-b border-gray-300">
-        <div className="text-2xl font-bold">{`Hello, ${capitalizeFirstLetter(user.username)}!`}</div>
+        <div className="text-2xl font-bold">{`Hello, ${capitalizeFirstLetter(
+          user.username
+        )}!`}</div>
         <div className="flex space-x-4">
           <NavLink
             to="/dashboard"
@@ -51,13 +51,6 @@ const ProjectList = () => {
           <div className="text-lg font-semibold text-gray-700">
             Your Projects
           </div>
-          <label className="flex items-center space-x-2 text-gray-700">
-            <input
-              type="checkbox"
-              className="form-checkbox h-4 w-4 text-gray-600"
-            />
-            <span className="text-lg font-semibold">Admin Projects</span>
-          </label>
         </div>
         <div className="border border-gray-200 shadow-sm rounded-lg overflow-hidden">
           <Spreadsheet />

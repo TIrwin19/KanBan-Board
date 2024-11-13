@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { ExternalLinkIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import {
@@ -12,7 +12,7 @@ import {
 import MemberModal from "./MemberModal";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
-import AddModal from "./AddModal";
+import AddMemberModal from "./AddMemberModal";
 import { useAuth } from "../../contexts/AuthContext";
 import { GET_ADMIN_PROJECT } from "./../../graphql/queries/projectQueries";
 import { NavLink } from "react-router-dom";
@@ -26,19 +26,23 @@ const Spreadsheet = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState(null);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
   const [projects, setProjects] = useState([]);
+
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   // Fetching projects using GraphQL query
   const { loading, error, data } = useQuery(GET_ADMIN_PROJECT, {
     variables: { adminId: user.id },
     pollInterval: 1000,
-    onCompleted: (data) => setProjects(data?.getAdminProject || []),
   });
 
-  console.log("Projects", projects);
+  useEffect(() => {
+    if (data) {
+      setProjects(data.getAdminProject || []);
+    }
+  }, [data]);
 
   const handleViewProject = async (projectId) => {
     await setProjectId(projectId);
@@ -55,27 +59,23 @@ const Spreadsheet = () => {
     setSelectedMembers([]);
   };
 
-  const openEditModal = () => {
+  const openEditModal = (projectId) => {
+    setSelectedProjectId(projectId);
     setIsEditModalOpen(true);
   };
 
-  const openAddModal = () => {
+  const openAddModal = (projectId) => {
+    setSelectedProjectId(projectId);
     setIsAddModalOpen(true);
   };
 
   // REWORK DELETE TO WORK WITH ID
-  const toggleDeleteModal = (project) => {
-    setProjectToDelete(project);
+  const toggleDeleteModal = (projectId) => {
+    setSelectedProjectId(projectId);
     setIsDeleteModalOpen(!isDeleteModalOpen);
   };
 
   const confirmDelete = () => {
-    if (projectToDelete !== null) {
-      setProjects((prevProjects) =>
-        prevProjects.filter((project) => project.id !== projectToDelete.id)
-      );
-      setProjectToDelete(null);
-    }
     setIsDeleteModalOpen(false);
   };
 
@@ -131,17 +131,6 @@ const Spreadsheet = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading projects.</p>;
-
-  // const logProjectColumns = () => {
-  //   projects.forEach((project) => {
-  //     console.log("Project Columns:", project);
-  //   });
-  // };
-
-  // Call logProjectColumns function when the data is successfully loaded
-  // if (!loading && projects.length > 0) {
-  //   logProjectColumns(); // This will log the columns array of each project to the console
-  // }
 
   return (
     <div className="text-[#363636] p-4 flex flex-col">
@@ -231,25 +220,40 @@ const Spreadsheet = () => {
               </div>
             ))}
 
-            <div className="md:col-span-2 flex justify-center space-x-2 mt-2 md:mt-0">
-              <button
-                className="bg-blue-200 px-2 py-1 rounded-md text-blue-800"
-                onClick={openEditModal}
-              >
-                <PencilAltIcon className="h-5 w-5 inline" />
-              </button>
-              <button
-                className="bg-green-200 px-2 py-1 rounded-md text-green-800"
-                onClick={openAddModal}
-              >
-                <PlusCircleIcon className="h-5 w-5 inline" />
-              </button>
-              <button
-                className="bg-red-200 px-2 py-1 rounded-md text-red-800"
-                onClick={() => toggleDeleteModal(item)}
-              >
-                <TrashIcon className="h-5 w-5 inline" />
-              </button>
+            <div className="md:col-span-2 flex items-center justify-center space-x-2 ">
+              <div className="mt-1 relative group h-fit">
+                <button
+                  className="bg-blue-200 p-1 rounded-md text-blue-800"
+                  onClick={() => openEditModal(item.id)}
+                >
+                  <PencilAltIcon className="h-5 w-5" />
+                </button>
+                <span className="absolute z-10 left-1/2 -translate-x-1/2 top-full mt-2 hidden rounded-lg bg-gray-50 text-black text-xs py-1 px-2 group-hover:block">
+                  Edit Project Name
+                </span>
+              </div>
+              <div className="mt-1 relative group h-fit">
+                <button
+                  className="bg-green-200 p-1 rounded-md text-green-800"
+                  onClick={() => openAddModal(item.id)}
+                >
+                  <PlusCircleIcon className="h-5 w-5" />
+                </button>
+                <span className="absolute z-10 left-1/2 -translate-x-1/2 top-full mt-2 hidden rounded-lg bg-gray-50 text-black text-xs py-1 px-2 group-hover:block">
+                  Add Member
+                </span>
+              </div>
+              <div className="mt-1 relative group h-fit">
+                <button
+                  className="bg-red-200 p-1 rounded-md text-red-800"
+                  onClick={() => toggleDeleteModal(item.id)}
+                >
+                  <TrashIcon className="h-5 w-5" />
+                </button>
+                <span className="absolute z-10 left-1/2 -translate-x-1/2 top-full mt-2 hidden rounded-lg bg-gray-50 text-black text-xs py-1 px-2 group-hover:block">
+                  Delete Project
+                </span>
+              </div>
             </div>
           </div>
         ))}
@@ -264,14 +268,19 @@ const Spreadsheet = () => {
         isOpen={isDeleteModalOpen}
         onClose={toggleDeleteModal}
         onConfirm={confirmDelete}
+        projectId={selectedProjectId}
+        adminId={user.id}
       />
       <EditModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
+        projectId={selectedProjectId}
       />
-      <AddModal
+      <AddMemberModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        projectId={selectedProjectId}
+        adminId={user.id}
       />
     </div>
   );

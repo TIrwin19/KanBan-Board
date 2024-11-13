@@ -1,6 +1,24 @@
-import React from "react";
+import { React, useState } from "react";
+import { useMutation } from "@apollo/client";
+import { EDIT_PROJECT } from "../../graphql/mutations/projectMutations";
 
-const EditModal = ({ isOpen, onClose, onConfirm }) => {
+const EditModal = ({ isOpen, onClose, onConfirm, projectId }) => {
+  const [newName, setNewName] = useState("");
+  const [message, setMessage] = useState("");
+  const [editProject] = useMutation(EDIT_PROJECT, {
+    variables: {
+      projectId: projectId,
+      newName: newName,
+    },
+  });
+
+  const handleEditProject = async (e) => {
+    e.preventDefault();
+    const { data } = await editProject();
+    setMessage(data.editProject);
+    setNewName("");
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -10,10 +28,10 @@ const EditModal = ({ isOpen, onClose, onConfirm }) => {
         <input
           type="text"
           className="w-full p-2 border border-gray-300 rounded-lg mb-4"
-     
-          
           placeholder="Enter new project name"
+          onChange={(e) => setNewName(e.target.value)}
         />
+        {message && <p className="text-green-600 mb-2">{message}</p>}
         <div className="flex justify-end space-x-2">
           <button
             onClick={onClose}
@@ -22,7 +40,7 @@ const EditModal = ({ isOpen, onClose, onConfirm }) => {
             Cancel
           </button>
           <button
-            onClick={onConfirm}
+            onClick={handleEditProject}
             className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
           >
             Confirm
