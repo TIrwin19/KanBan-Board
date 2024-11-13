@@ -35,13 +35,13 @@ const MemberModal = ({ isOpen, onClose, members, onAddMember }) => {
           >
             Close
           </button>
-          <button
+          {/* <button
             type="button"
             className="mr-2 py-2 px-4 rounded-lg border border-gray-300 bg-green-600 hover:bg-green-700 text-white"
             onClick={onAddMember}
           >
             Add Member
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

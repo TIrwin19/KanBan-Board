@@ -1,13 +1,31 @@
-import React from "react";
+import { React } from "react";
+import { useMutation } from "@apollo/client";
+import { DELETE_PROJECT } from "../../graphql/mutations/projectMutations";
 
-const DeleteModal = ({ isOpen, onClose, onConfirm }) => {
+const DeleteModal = ({ isOpen, onClose, onConfirm, projectId, adminId }) => {
+  const [deleteProject] = useMutation(DELETE_PROJECT, {
+    variables: {
+      projectId: projectId,
+      adminId: adminId,
+    },
+  });
+
+  const handleDeleteProject = (e) => {
+    e.preventDefault();
+    deleteProject();
+    onConfirm();
+    console.log("Project Deleted");
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-sm relative">
         <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
-        <p className="text-gray-600 mb-6">Are you sure you want to delete this project?</p>
+        <p className="text-gray-600 mb-6">
+          Are you sure you want to delete this project?
+        </p>
         <div className="flex justify-end space-x-2">
           <button
             onClick={onClose}
@@ -16,7 +34,7 @@ const DeleteModal = ({ isOpen, onClose, onConfirm }) => {
             Cancel
           </button>
           <button
-            onClick={onConfirm}
+            onClick={handleDeleteProject}
             className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white"
           >
             Delete

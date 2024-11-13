@@ -153,6 +153,19 @@ const resolvers = {
       }
     },
 
+    editProject: async (_, { projectId, newName }) => {
+      if (!projectId) throw new Error("Project ID not provided")
+      if (!newName) throw new Error("No name provided")
+
+      const project = await Project.findById(projectId)
+      if (!project) throw new Error("Project does not exist")
+
+      project.title = newName
+
+      await project.save()
+      return "Project name changed successfully!"
+    },
+
     deleteProject: async (_, { projectId, adminId }) => {
       if (!projectId || !adminId) throw new Error("Project ID and or Admin ID not provided")
 

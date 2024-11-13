@@ -22,6 +22,12 @@ export const ADD_MEMBERS = gql`
 }
 `
 
+export const EDIT_PROJECT = gql`
+  mutation EditProject($projectId: ID!, $newName: String!) {
+  editProject(projectId: $projectId, newName: $newName)
+}
+`
+
 export const DELETE_PROJECT = gql`
   mutation DeleteProject($projectId: ID!, $adminId: ID!) {
     deleteProject(projectId: $projectId, adminId: $adminId)
