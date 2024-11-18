@@ -71,14 +71,13 @@ const AddMembers = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center">
         {data && (
           <h1 className="text-slate-50 text-xl font-bold mb-4">{title}</h1>
         )}
         {currentUser === projectAdmin && (
-          <form onSubmit={handleAction} className="flex items-end mb-4">
+          <form onSubmit={handleAction} className="flex items-end mb-4 ">
             <label className="text-gray-700">
-              <span className="text-[#D2BAC3] text-xs">Add a member</span>
               <input
                 type="email"
                 placeholder="john@example.com"
@@ -88,9 +87,10 @@ const AddMembers = () => {
                   setFormData({ ...formData, email: e.target.value })
                 }
               />
+              {/* <span className="text-[#D2BAC3] text-xs">Add a member</span> */}
             </label>
             <button className="bg-green-500 h-fit px-2 py-[9px] ml-2 rounded-md hover:bg-green-600 transition-all duration-300 ease-in-out">
-              Submit
+              Add
             </button>
           </form>
         )}

@@ -30,9 +30,13 @@ export const GET_JOINED_PROJECT = gql`
     getJoinedProject(userId: $userId) {
       id
       title
+      admin {
+        username
+      }
       members {
         username
       }
+      createdAt
     }
   }
 `;

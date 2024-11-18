@@ -186,7 +186,7 @@ export default function NewBoard() {
   if (errorProject) return <p>Error: {error.message}</p>;
 
   return (
-    <div className="flex space-x-4">
+    <div className="flex flex-col md:flex-row space-y-4 md:space-x-4">
       <DndContext
         announcements={defaultAnnouncements}
         sensors={sensors}
@@ -195,9 +195,9 @@ export default function NewBoard() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex flex-col">
+        <div className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-2">
           {currentUser === projectAdmin && (
-            <div className="flex flex-col">
+            <div className="flex md:flex-col space-x-2 md:space-x-0 md:space-y-2">
               <div className="relative group h-fit">
                 <button
                   onClick={() => setModalOpen(true)}
@@ -210,7 +210,7 @@ export default function NewBoard() {
                 </span>
               </div>
 
-              <div className="mt-1 relative group h-fit">
+              <div className="relative group h-fit">
                 <button
                   onClick={() => setDeleteModalOpen(true)}
                   className="h-fit bg-red-500 text-slate-50 p-1 rounded-lg text-2xl font-bold"
@@ -223,7 +223,7 @@ export default function NewBoard() {
               </div>
             </div>
           )}
-          <div className="mt-1 relative group h-fit">
+          <div className="relative group h-fit">
             <NavLink to={"/dashboard"}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

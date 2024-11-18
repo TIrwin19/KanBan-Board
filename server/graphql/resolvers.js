@@ -85,7 +85,9 @@ const resolvers = {
 
       const joinedProjects = await Project.find({
         members: userId,
-      }).populate("members")
+      })
+        .populate("members")
+        .populate("admin")
 
       return joinedProjects
     },

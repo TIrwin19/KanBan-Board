@@ -24,11 +24,11 @@ const ProjectList = () => {
 
   return (
     <div className="text-[#363636] p-4 flex flex-col bg-gray-50">
-      <div className="flex justify-between items-center bg-gray-100 p-4 rounded-t-lg border-b border-gray-300">
+      <div className="flex justify-between items-center bg-gray-100 rounded-t-lg border-b border-gray-300">
         <div className="text-2xl font-bold">{`Hello, ${capitalizeFirstLetter(
           user.username
         )}!`}</div>
-        <div className="flex space-x-4">
+        <div className="md:flex md:scale-100 scale-75 space-x-4">
           <NavLink
             to="/dashboard"
             className="flex items-center gap-2 p-2 transition-all duration-200 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 hover:text-black rounded-lg"

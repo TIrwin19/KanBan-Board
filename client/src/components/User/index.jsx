@@ -171,7 +171,8 @@ export default function User() {
               Project List
               <ChevronRightIcon className="h-5 w-5 ml-auto" />
             </NavLink>
-            <NavLink
+            {/* 
+             <NavLink
               to={`/active-projects/${user.id}`}
               className="flex items-center gap-2 p-2 transition-all duration-200 text-gray-700 hover:text-black hover:font-bold"
             >
@@ -186,7 +187,7 @@ export default function User() {
               <CheckCircleIcon className="h-5 w-5" />
               Completed Projects
               <ChevronRightIcon className="h-5 w-5 ml-auto" />
-            </NavLink>
+            </NavLink> */}
 
             <button
               onClick={handleLogout}

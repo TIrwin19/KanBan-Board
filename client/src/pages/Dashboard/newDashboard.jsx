@@ -24,17 +24,23 @@ const Dashboardnew = () => {
     <div className="flex flex-wrap gap-4 p-4 h-screen">
       {/* Left Column */}
       <div className="flex flex-col space-y-4 flex-grow w-full lg:w-2/4 xl:w-2/5">
-        <div className="bg-gray-200 rounded-lg p-4 flex flex-col space-y-4 h-full">
-          <div className="flex flex-col space-y-4">
+        <div className="bg-gray-200 rounded-lg p-4 flex flex-col justify-center space-y-4 h-full">
+          <div className="flex flex-col items-center md:items-baseline space-y-4">
             <Welcome />
             <Welcome2 />
             <Welcome3 />
           </div>
         </div>
         <div className="bg-gray-200 rounded-lg p-4 flex-grow">
+          <span className="text-2xl font-bold text-[#363636]">
+            Your projects
+          </span>
           <ProjectCard />
         </div>
         <div className="bg-gray-200 rounded-lg p-4 flex-grow">
+          <span className="text-2xl font-bold text-[#363636]  ">
+            Joined projects
+          </span>
           <JoinedProjectCard />
         </div>
       </div>

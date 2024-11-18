@@ -20,7 +20,7 @@ const Column = (props) => {
       items={tasks.map((task) => task.order) || []} // Use order as the item id
       strategy={verticalListSortingStrategy}
     >
-      <div className="bg-gray-100 w-1/3 p-4 rounded-lg shadow-lg">
+      <div className="bg-gray-100 w-full md:w-1/3 p-6 rounded-lg shadow-lg">
         <h2 className="text-lg font-bold mb-4 text-gray-800">{title}</h2>
         <div ref={setNodeRef} className="space-y-2 min-h-full min-w-full">
           {tasks.length === 0 ? (

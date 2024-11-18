@@ -154,19 +154,19 @@ const Spreadsheet = () => {
           Date Created {renderSortIcon("createdAt")}
         </div>
         <div
-          className="col-span-1 font-bold text-center cursor-pointer"
+          className="col-span-1 font-bold text-center cursor-pointer hidden md:block"
           onClick={() => sortData("todo")}
         >
           To-Do {renderSortIcon("todo")}
         </div>
         <div
-          className="col-span-1 font-bold text-center cursor-pointer"
+          className="col-span-1 font-bold text-center cursor-pointer hidden md:block"
           onClick={() => sortData("inProgress")}
         >
           In-Progress {renderSortIcon("inProgress")}
         </div>
         <div
-          className="col-span-1 font-bold text-center cursor-pointer"
+          className="col-span-1 font-bold text-center cursor-pointer hidden md:block"
           onClick={() => sortData("done")}
         >
           Done {renderSortIcon("done")}
@@ -179,7 +179,7 @@ const Spreadsheet = () => {
             key={index}
             className="grid grid-cols-1 md:grid-cols-10 border-b border-gray-200 p-2 items-center bg-gray-50 divide-y md:divide-y-0 md:divide-x divide-gray-200"
           >
-            <div className="col-span-2">
+            <div className="col-span-2 text-center">
               <NavLink
                 to={`/project/${item.id}`}
                 onClick={() => handleViewProject(item.id)}
@@ -191,36 +191,36 @@ const Spreadsheet = () => {
                 </span>
               </NavLink>
             </div>
-            <div className="col-span-2 flex md:items-center md:justify-center">
-              <div className="flex -space-x-2">
-                {item.members?.map((member, i) => (
-                  <img
-                    key={i}
-                    className="w-8 h-8 border border-gray-600 rounded-full"
-                    src={member.avatar}
-                    alt={member.name}
-                    title={member.name}
-                  />
-                ))}
+            <div className="col-span-2 text-center">
+              <div className="flex justify-center items-center">
+                <div className="flex -space-x-2">
+                  {item.members?.map((member, i) => (
+                    <img
+                      key={i}
+                      className="w-8 h-8 border border-gray-600 rounded-full"
+                      src={member.avatar}
+                      alt={member.name}
+                      title={member.name}
+                    />
+                  ))}
+                </div>
+                <button onClick={() => openModal(item.members || [])}>
+                  <DotsVerticalIcon className="h-5 w-5 text-gray-600 ml-2" />
+                </button>
               </div>
-              <button onClick={() => openModal(item.members || [])}>
-                <DotsVerticalIcon className="h-5 w-5 text-gray-600 ml-2" />
-              </button>
             </div>
-            <div className="md:col-span-1 text-center mt-2 md:mt-0">
+            <div className="md:col-1 text-center mt-2 md:mt-0">
               <span>{item.createdAt ? formatDate(item.createdAt) : "N/A"}</span>
             </div>
-
             {item.columns.map((column) => (
               <div
                 key={column._id}
-                className="md:col-span-1 text-center mt-2 md:mt-0"
+                className="hidden md:flex flex-row justify-center items-center space-x-2 text-center mt-2 md:mt-0"
               >
-                <p>{column.tasks.length}</p>
+                <p className="text-lg">{column.tasks.length}</p>
               </div>
             ))}
-
-            <div className="md:col-span-2 flex items-center justify-center space-x-2 ">
+            <div className="md:col-span-2 flex items-center justify-center space-x-2 mt-2 md:mt-0">
               <div className="mt-1 relative group h-fit">
                 <button
                   className="bg-blue-200 p-1 rounded-md text-blue-800"
