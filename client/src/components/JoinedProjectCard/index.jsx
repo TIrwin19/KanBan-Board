@@ -50,7 +50,7 @@ const JoinedProjectCard = () => {
   };
 
   return (
-    <div className="relative overflow-x-hidden scrollable-container">
+    <div className="relative overflow-x-hidden scrollable-container mt-4">
       <div
         className="scroll-area left-scroll flex justify-center transition ease-in-out delay-75 hover:scale-110 duration-150"
         onMouseEnter={() => startScrolling("left")}
@@ -71,9 +71,8 @@ const JoinedProjectCard = () => {
             <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               {card.title}
             </h5>
-            <p className="flex-grow mb-3 font-normal text-gray-700 dark:text-gray-400 break-words">
-              {/* {card.description} */}
-              description
+            <p className="flex-grow mb-3 font-semibold text-gray-700 dark:text-gray-400">
+              Owner: {card.admin.username}
             </p>
             {/* <p className="text-sm text-gray-600 dark:text-gray-300">
               Members: {card.members}
@@ -83,7 +82,7 @@ const JoinedProjectCard = () => {
               onClick={() => handleViewProject(card.id)}
               className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
-              Link to project
+              Go to project
               <svg
                 className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
                 aria-hidden="true"
